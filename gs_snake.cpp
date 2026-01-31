@@ -10,13 +10,11 @@
  |                                                                                    03/2024 |
  +============================================================================================*/
 
-
 //==============================================================================================
 // Include header files.
 // ---------------------------------------------------------------------------------------------
 #include "gs_snake.h"
 //==============================================================================================
-
 
 //==============================================================================================
 // Global variables.
@@ -24,11 +22,9 @@
 GS_Snake g_gsSnake;
 //==============================================================================================
 
-
 // *********************************************************************************************
 // *** Constructor & Destructor Methods ********************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::GS_Snake():
@@ -42,47 +38,48 @@ GS_Snake::GS_Snake() : GS_Application()
 {
     m_bKeepAspectRatio = true;
 
-    m_gsSettings.nDisplayWidth   = -1;
-    m_gsSettings.nDisplayHeight  = -1;
-    m_gsSettings.nColorDepth     = -1;
-    m_gsSettings.bWindowedMode   = -1;
-    m_gsSettings.bEnableVSync    = -1;
+    m_gsSettings.nDisplayWidth = -1;
+    m_gsSettings.nDisplayHeight = -1;
+    m_gsSettings.nColorDepth = -1;
+    m_gsSettings.bWindowedMode = -1;
+    m_gsSettings.bEnableVSync = -1;
     m_gsSettings.bEnableAliasing = -1;
     m_gsSettings.bEnableAliasing = -1;
     m_gsSettings.fFrameCap = -1;
-    m_gsSettings.nMusicVolume    = -1;
-    m_gsSettings.nEffectsVolume  = -1;
+    m_gsSettings.nMusicVolume = -1;
+    m_gsSettings.nEffectsVolume = -1;
 
     for (int nLoop = 0; nLoop < MAX_SCORES; nLoop++)
     {
         lstrcpy(m_gsHiscores[nLoop].szName, "..........");
         lstrcpy(m_gsHiscores[nLoop].szLevel, "0-0");
         lstrcpy(m_gsHiscores[nLoop].szMode, ".......");
-        m_gsHiscores[nLoop].lScore  = 0l;
+        m_gsHiscores[nLoop].lScore = 0l;
     }
 
     m_nGameProgress = 0;
     m_nPrevProgress = 0;
     m_nNextProgress = 0;
 
-    m_bIsInitialized  = FALSE;
+    m_bIsInitialized = FALSE;
     m_bWasKeyReleased = FALSE;
+    m_bWasButtonReleased = FALSE;
     m_nOptionSelected = -1;
     m_nCounter = 0;
 
     m_fInterval = 0.0f;
-    m_fRotate   = 0.0f;
-    m_fScale    = 0.0f;
-    m_fAlpha    = 0.0f;
+    m_fRotate = 0.0f;
+    m_fScale = 0.0f;
+    m_fAlpha = 0.0f;
 
-    m_gsMenuTextColor.fRed   = 1.0f;
+    m_gsMenuTextColor.fRed = 1.0f;
     m_gsMenuTextColor.fGreen = 1.0f;
-    m_gsMenuTextColor.fBlue  = 1.0f;
+    m_gsMenuTextColor.fBlue = 1.0f;
     m_gsMenuTextColor.fAlpha = 0.3f;
 
-    m_gsMenuHighColor.fRed   = 1.0f;
+    m_gsMenuHighColor.fRed = 1.0f;
     m_gsMenuHighColor.fGreen = 1.0f;
-    m_gsMenuHighColor.fBlue  = 1.0f;
+    m_gsMenuHighColor.fBlue = 1.0f;
     m_gsMenuHighColor.fAlpha = 1.0f;
 
     m_currentWorld = 1;
@@ -91,7 +88,7 @@ GS_Snake::GS_Snake() : GS_Application()
     m_lives = DEFAULT_LIVES;
 
     m_nScoreIndex = 0;
-    m_lScore      = 0;
+    m_lScore = 0;
 
     m_defaultRatState = RAT_STATE_MOVING;
     m_gameMode = NORMAL_MODE;
@@ -99,9 +96,7 @@ GS_Snake::GS_Snake() : GS_Application()
     this->GameSetup();
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::~GS_Snake():
@@ -116,14 +111,11 @@ GS_Snake::~GS_Snake()
     // Does nothing at the moment.
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Setup Methods ***************************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::GameSetup():
@@ -152,24 +144,22 @@ BOOL GS_Snake::GameSetup()
         }
 
         // Set all other game settings to their defaults.
-        m_gsSettings.nDisplayWidth   = DEFAULT_WIDTH;
-        m_gsSettings.nDisplayHeight  = DEFAULT_HEIGHT;
-        m_gsSettings.nColorDepth     = DEFAULT_DEPTH;
-        m_gsSettings.bEnableVSync    = DEFAULT_VSYNC;
+        m_gsSettings.nDisplayWidth = DEFAULT_WIDTH;
+        m_gsSettings.nDisplayHeight = DEFAULT_HEIGHT;
+        m_gsSettings.nColorDepth = DEFAULT_DEPTH;
+        m_gsSettings.bEnableVSync = DEFAULT_VSYNC;
         m_gsSettings.bEnableAliasing = DEFAULT_ALIAS;
-        m_gsSettings.fFrameCap       = DEFAULT_FRAMECAP;
-        m_gsSettings.nMusicVolume    = DEFAULT_MUSIC;
-        m_gsSettings.nEffectsVolume  = DEFAULT_SOUND;
+        m_gsSettings.fFrameCap = DEFAULT_FRAMECAP;
+        m_gsSettings.nMusicVolume = DEFAULT_MUSIC;
+        m_gsSettings.nEffectsVolume = DEFAULT_SOUND;
     }
 
     // Set the display mode
-    this->SetMode
-    (
+    this->SetMode(
         m_gsSettings.nDisplayWidth,
         m_gsSettings.nDisplayHeight,
         m_gsSettings.nColorDepth,
-        m_gsSettings.bWindowedMode
-    );
+        m_gsSettings.bWindowedMode);
 
     // Set render scaling values
     this->SetRenderScaling(this->GetWidth(), this->GetHeight(), m_bKeepAspectRatio);
@@ -183,14 +173,11 @@ BOOL GS_Snake::GameSetup()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Initialize & Shutdown Methods ***********************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::GameInit():
@@ -205,7 +192,7 @@ BOOL GS_Snake::GameInit()
 
     // Seed the timer for random numbers.
     time_t t;
-    srand((unsigned) time(&t));
+    srand((unsigned)time(&t));
 
     // Setup the text for the window title bar.
     this->SetTitle("Cyber Snake");
@@ -215,7 +202,7 @@ BOOL GS_Snake::GameInit()
     /////////////////////////////////////////////////////////////////////////////////////////////
 
     // Did we fail creating the OpenGL display?
-    if ( !m_gsDisplay.Create(this->GetDevice(), this->GetWidth(), this->GetHeight(), this->GetColorDepth()) )
+    if (!m_gsDisplay.Create(this->GetDevice(), this->GetWidth(), this->GetHeight(), this->GetColorDepth()))
     {
         GS_Error::Report("GS_SNAKE.CPP", 186, "Failed to create OpenGL display!");
         return FALSE;
@@ -233,9 +220,22 @@ BOOL GS_Snake::GameInit()
     // Are we in fullscreen mode?
     // if (!this->IsWindowed())
     // {
-        // Hide the mouse cursor.
-        m_gsMouse.HideCursor(TRUE);
+    // Hide the mouse cursor.
+    m_gsMouse.HideCursor(TRUE);
     // }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Initialize Controller Input //////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Initialize controller input.
+    // (Controller auto-initializes in constructor, just log if connected)
+    if (m_gsController.GetConnectedCount() > 0)
+    {
+        char szDebugMsg[256];
+        sprintf(szDebugMsg, "Controller connected: %s\n", m_gsController.GetControllerName(0));
+        GS_Platform::OutputDebugString(szDebugMsg);
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Initialize The FMOD Sound System /////////////////////////////////////////////////////////
@@ -281,12 +281,12 @@ BOOL GS_Snake::GameInit()
     // Were we not successful?
     // if (FALSE == bResult)
     // {
-        // GS_Error::Report("GS_SNAKE.CPP", 245, "Failed to create tile sprite!");
+    // GS_Error::Report("GS_SNAKE.CPP", 245, "Failed to create tile sprite!");
     // }
 
     // Set up a rectangle the size of the screen, play area, and scorearea (left, top, right, bottom)
-    SetRect(&m_rcScreen,    0, INTERNAL_RES_Y,                         INTERNAL_RES_X,    0);
-    SetRect(&m_rcPlayArea,  0, PLAY_AREA_HEIGHT,                       PLAY_AREA_WIDTH,   0);
+    SetRect(&m_rcScreen, 0, INTERNAL_RES_Y, INTERNAL_RES_X, 0);
+    SetRect(&m_rcPlayArea, 0, PLAY_AREA_HEIGHT, PLAY_AREA_WIDTH, 0);
     SetRect(&m_rcScoreArea, 0, (PLAY_AREA_HEIGHT + SCORE_AREA_HEIGHT), SCORE_AREA_HEIGHT, (PLAY_AREA_HEIGHT + 1));
 
     // Create an unfiltered sprite that will be used for the title.
@@ -393,7 +393,6 @@ BOOL GS_Snake::GameInit()
 
 // *********************************************************************************************
 
-
 //==============================================================================================
 // GS_Snake::GameShutdown():
 // ---------------------------------------------------------------------------------------------
@@ -411,6 +410,9 @@ BOOL GS_Snake::GameShutdown()
     // Reset mouse data.
     m_gsMouse.Reset();
 
+    // Reset controller data.
+    m_gsController.Reset();
+
     // Destroy the OpenGL display.
     m_gsDisplay.Destroy();
 
@@ -420,14 +422,11 @@ BOOL GS_Snake::GameShutdown()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Release & Restore Methods ***************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::GameRelease():
@@ -466,9 +465,7 @@ BOOL GS_Snake::GameRelease()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::GameRestore():
@@ -493,14 +490,11 @@ BOOL GS_Snake::GameRestore()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Main Game Loop **************************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::GameLoop():
@@ -566,14 +560,11 @@ BOOL GS_Snake::GameLoop()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Message Handling Methods ****************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::OnChangeMode():
@@ -586,13 +577,11 @@ BOOL GS_Snake::GameLoop()
 void GS_Snake::OnChangeMode()
 {
     // Change to windowed or fullscreen mode as selected by the user
-    this->SetMode
-    (
+    this->SetMode(
         m_gsSettings.nDisplayWidth,
         m_gsSettings.nDisplayHeight,
         this->GetColorDepth(),
-        !this->IsWindowed()
-    );
+        !this->IsWindowed());
 
     // Set values for scaling
     this->SetRenderScaling(this->GetWidth(), this->GetHeight(), m_bKeepAspectRatio);
@@ -604,9 +593,7 @@ void GS_Snake::OnChangeMode()
     this->SaveSettings();
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::MsgProc():
@@ -712,6 +699,12 @@ LRESULT GS_Snake::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         m_gsKeyboard.KeyDown(wParam);
         // Add the key to the keyboard buffer.
         m_gsKeyboard.AddKeyToBuffer(wParam);
+
+        // Also add to controller buffer if it's a controller button
+        if (wParam >= GSC_BUTTON_A && wParam <= GSC_BUTTON_DPAD_RIGHT)
+        {
+            m_gsController.AddButtonToBuffer(wParam);
+        }
         break;
 
     // Received when a nonsystem key is released. A nonsystem key is a key
@@ -805,14 +798,11 @@ LRESULT GS_Snake::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return GS_Application::MsgProc(hWnd, uMsg, wParam, lParam);
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Game Intro & Outro Methods **************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::GameIntro():
@@ -847,8 +837,8 @@ BOOL GS_Snake::GameIntro()
     {
         // Initialize variables.
         m_fInterval = 0.0f;
-        m_nCounter  = 0;
-        m_fAlpha    = 0.0f;
+        m_nCounter = 0;
+        m_fAlpha = 0.0f;
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
         // Where we want to go to next.
@@ -919,13 +909,13 @@ BOOL GS_Snake::GameIntro()
 
     // Display a message centered in the screen.
     m_gsFont.SetText("LITTLE COMPUTER PERSON");
-    m_gsFont.SetDestX((INTERNAL_RES_X   -  m_gsFont.GetTextWidth()) / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(((INTERNAL_RES_Y - m_gsFont.GetTextHeight()) / 2) +
                       m_gsFont.GetTextHeight());
     m_gsFont.Render();
 
     m_gsFont.SetText("PRESENTS");
-    m_gsFont.SetDestX((INTERNAL_RES_X   -  m_gsFont.GetTextWidth()) / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(((INTERNAL_RES_Y - m_gsFont.GetTextHeight()) / 2) -
                       m_gsFont.GetTextHeight());
     m_gsFont.Render();
@@ -958,9 +948,7 @@ BOOL GS_Snake::GameIntro()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::GameOutro():
@@ -997,8 +985,8 @@ BOOL GS_Snake::GameOutro()
         m_gsKeyboard.ClearBuffer();
         // Initialize method variables.
         m_fInterval = 0.0f;
-        m_nCounter  = 0;
-        m_fAlpha    = 1.0f;
+        m_nCounter = 0;
+        m_fAlpha = 1.0f;
         // Is the title music playing?
         if (m_gsSound.IsStreamPlaying())
         {
@@ -1008,7 +996,6 @@ BOOL GS_Snake::GameOutro()
         // Initialization completed.
         m_bIsInitialized = TRUE;
     }
-
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Get Keyboard Input ///////////////////////////////////////////////////////////////////////
@@ -1068,69 +1055,69 @@ BOOL GS_Snake::GameOutro()
     // Display the game credits centered in the screen.
     m_gsFont.SetText("GAME CREDITS");
     m_gsFont.SetScaleXY(1.5f, 1.5f);
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 3));
     m_gsFont.SetModulateColor(1.0f, 0.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     m_gsFont.SetText("DEVELOPED BY");
     m_gsFont.SetScaleXY(1.0f, 1.0f);
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 9));
     m_gsFont.SetModulateColor(0.0f, 1.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     m_gsFont.SetText("LITTLE COMPUTER PERSON");
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 11));
     m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     m_gsFont.SetText("TITLE MUSIC");
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 14));
     m_gsFont.SetModulateColor(0.0f, 1.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     m_gsFont.SetText("Stomp Rock for Champions - Musictown");
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 16));
     m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     m_gsFont.SetText("GAME MUSIC");
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 19));
     m_gsFont.SetModulateColor(0.0f, 1.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     // m_gsFont.SetText("............    ............");
     m_gsFont.SetText("Cyber Race - FASSounds");
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 21));
     m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     m_gsFont.SetText("TITLE BACKGROUND IMAGE");
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 24));
     m_gsFont.SetModulateColor(0.0f, 1.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     m_gsFont.SetText("Unknown");
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 26));
     m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     m_gsFont.SetText("THANKS FOR PLAYING!");
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 29));
     m_gsFont.SetModulateColor(1.0f, 0.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
 
     m_gsFont.SetText("PRESS ANY KEY TO EXIT");
-    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(INTERNAL_RES_Y - (m_gsFont.GetScaledHeight() * 32));
     m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, m_fAlpha);
     m_gsFont.Render();
@@ -1157,14 +1144,11 @@ BOOL GS_Snake::GameOutro()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Title Screen Methods ********************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::TitleIntro():
@@ -1198,7 +1182,7 @@ BOOL GS_Snake::TitleIntro()
     if (m_bIsInitialized == FALSE)
     {
         // Initialize method variables.
-        m_fAlpha    = 0.0f;
+        m_fAlpha = 0.0f;
         // Where we want to go to next.
         m_nNextProgress = TITLE_SCREEN;
         // Initialization completed.
@@ -1268,9 +1252,7 @@ BOOL GS_Snake::TitleIntro()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::TitleScreen():
@@ -1345,59 +1327,60 @@ BOOL GS_Snake::TitleScreen()
         }
 
         // For every particle snake
-        for( int i = 0; i < MAX_PARTICLE_SNAKES; i++ )
+        for (int i = 0; i < MAX_PARTICLE_SNAKES; i++)
         {
             // Determine a random start direction for the particle snake
-            m_particleSnake[i].direction = (rand()%4);
+            m_particleSnake[i].direction = (rand() % 4);
 
             // Depending on the directio, set random starting coordinates
-            if( m_particleSnake[i].direction == SNAKE_MOVE_UP )
+            if (m_particleSnake[i].direction == SNAKE_MOVE_UP)
             {
-                m_particleSnake[i].x = (rand()%((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH)));
+                m_particleSnake[i].x = (rand() % ((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH)));
                 m_particleSnake[i].y = 0;
             }
-            else if( m_particleSnake[i].direction == SNAKE_MOVE_RIGHT )
+            else if (m_particleSnake[i].direction == SNAKE_MOVE_RIGHT)
             {
                 m_particleSnake[i].x = 0;
-                m_particleSnake[i].y = (rand()%((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT)));
+                m_particleSnake[i].y = (rand() % ((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT)));
             }
-            else if( m_particleSnake[i].direction == SNAKE_MOVE_DOWN )
+            else if (m_particleSnake[i].direction == SNAKE_MOVE_DOWN)
             {
-                m_particleSnake[i].x = (rand()%((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH)));
+                m_particleSnake[i].x = (rand() % ((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH)));
                 m_particleSnake[i].y = ((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT));
             }
-            else if( m_particleSnake[i].direction == SNAKE_MOVE_LEFT )
+            else if (m_particleSnake[i].direction == SNAKE_MOVE_LEFT)
             {
                 m_particleSnake[i].x = ((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH));
-                m_particleSnake[i].y = (rand()%((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT)));;
+                m_particleSnake[i].y = (rand() % ((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT)));
+                ;
             }
 
             // Determine a random direction interval the particle snake
             m_particleSnake[i].intervalCounter = 0;
-            m_particleSnake[i].directionInterval = (rand()%90) + 10;
+            m_particleSnake[i].directionInterval = (rand() % 90) + 10;
 
             // Set a random movement speed
-            m_particleSnake[i].speed = (rand()%MAX_PARTICLE_SNAKE_SPEED) + MIN_PARTICLE_SNAKE_SPEED;
+            m_particleSnake[i].speed = (rand() % MAX_PARTICLE_SNAKE_SPEED) + MIN_PARTICLE_SNAKE_SPEED;
 
             // Set a random length
-            m_particleSnake[i].length = (rand()%MAX_PARTICLE_SNAKE_LENGTH) + MIN_PARTICLE_SNAKE_LENGTH;
+            m_particleSnake[i].length = (rand() % MAX_PARTICLE_SNAKE_LENGTH) + MIN_PARTICLE_SNAKE_LENGTH;
 
             // Create random colors for the particle snake
             // int randomColor = (rand()%2);
             // if(randomColor == 0 ) {
-                // m_particleSnake[i].color.fRed = 1.0f;
-                // m_particleSnake[i].color.fGreen = 0.0f;
-                // m_particleSnake[i].color.fBlue = 1.0f;
+            // m_particleSnake[i].color.fRed = 1.0f;
+            // m_particleSnake[i].color.fGreen = 0.0f;
+            // m_particleSnake[i].color.fBlue = 1.0f;
             // }
             // else if(randomColor == 1 ) {
-                // m_particleSnake[i].color.fRed = 0.0f;
-                // m_particleSnake[i].color.fGreen = 1.0f;
-                // m_particleSnake[i].color.fBlue = 1.0f;
+            // m_particleSnake[i].color.fRed = 0.0f;
+            // m_particleSnake[i].color.fGreen = 1.0f;
+            // m_particleSnake[i].color.fBlue = 1.0f;
             // }
-            m_particleSnake[i].color.fRed = (float(rand()%90) / 100.0f) + 0.1f;
-            m_particleSnake[i].color.fGreen = float(rand()%90) / 100.0f + 0.1f;
-            m_particleSnake[i].color.fBlue = float(rand()%90) / 100.0f + 0.1f;
-            m_particleSnake[i].color.fAlpha = (float(rand()%75) / 100.0f) + 0.25f;
+            m_particleSnake[i].color.fRed = (float(rand() % 90) / 100.0f) + 0.1f;
+            m_particleSnake[i].color.fGreen = float(rand() % 90) / 100.0f + 0.1f;
+            m_particleSnake[i].color.fBlue = float(rand() % 90) / 100.0f + 0.1f;
+            m_particleSnake[i].color.fAlpha = (float(rand() % 75) / 100.0f) + 0.25f;
         }
 
         // Initialization completed.
@@ -1416,6 +1399,7 @@ BOOL GS_Snake::TitleScreen()
     {
     // Was the up key pressed?
     case GSK_UP:
+    case GSC_BUTTON_DPAD_UP:
         // Highlight the previous option.
         m_gsMenu.HighlightPrev();
         // Play the appropriate sound effect.
@@ -1425,6 +1409,7 @@ BOOL GS_Snake::TitleScreen()
         break;
     // Was the down key pressed?
     case GSK_DOWN:
+    case GSC_BUTTON_DPAD_DOWN:
         // Highlight the next option.
         m_gsMenu.HighlightNext();
         // Play the appropriate sound effect.
@@ -1434,6 +1419,7 @@ BOOL GS_Snake::TitleScreen()
         break;
     // Was the enter key pressed?
     case GSK_ENTER:
+    case GSC_BUTTON_A:
         // Remeber which option is highlighted.
         m_nOptionSelected = m_gsMenu.GetHighlight();
         // Play the appropriate sound effect.
@@ -1443,6 +1429,7 @@ BOOL GS_Snake::TitleScreen()
         break;
     // Was the escape key pressed?
     case GSK_ESCAPE:
+    case GSC_BUTTON_B:
         // Have the quit option been highlighted?
         if (m_gsMenu.GetHighlight() == 3)
         {
@@ -1561,7 +1548,6 @@ BOOL GS_Snake::TitleScreen()
     // Do Method Logic //////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////
 
-
     // Determine the interval required to perform an action 60 times every second at the
     // current frame rate, and add it to the previous intervals.
     m_fInterval += this->GetActionInterval(60);
@@ -1569,14 +1555,15 @@ BOOL GS_Snake::TitleScreen()
     // Create an animation for the title
     // nTitleRotation += 3;
     // if( nTitleRotation > 360 ) {
-        // nTitleRotation = 0;
+    // nTitleRotation = 0;
     // }
 
     // Add to the title alpha interval counter
     fTitleAlphaInterval += this->GetActionInterval(60);
 
     // Should an action be taken?
-    if( fTitleAlphaInterval > 1.0f ) {
+    if (fTitleAlphaInterval > 1.0f)
+    {
         // Reset the interval counter
         fTitleAlphaInterval = 0;
 
@@ -1584,113 +1571,117 @@ BOOL GS_Snake::TitleScreen()
         fTitleAlpha = fTitleAlpha + fTitleAlphaFadeAmount;
 
         // Has the fde amount exceeded the bounds?
-        if( fTitleAlpha <= 0.0f ) {
+        if (fTitleAlpha <= 0.0f)
+        {
             // Reverse the fade
             fTitleAlphaFadeAmount = fTitleAlphaFadeAmount * -1;
             fTitleAlpha = 0.0f;
         }
-        else if( fTitleAlpha >= 1.0f ) {
+        else if (fTitleAlpha >= 1.0f)
+        {
             // Reverse the fade
             fTitleAlphaFadeAmount = fTitleAlphaFadeAmount * -1;
             fTitleAlpha = 1.0f;
         }
     }
 
-
     // For every particle snake
-    for( int i = 0; i < MAX_PARTICLE_SNAKES; i++ )
+    for (int i = 0; i < MAX_PARTICLE_SNAKES; i++)
     {
         // Increase the particle snake action interval counter
         m_particleSnake[i].intervalCounter += this->GetActionInterval(60);
 
         // Have we reached the time for the particle snake to change direction?
-        if( m_particleSnake[i].intervalCounter > m_particleSnake[i].directionInterval ) {
+        if (m_particleSnake[i].intervalCounter > m_particleSnake[i].directionInterval)
+        {
             // Move in a new random direction that is not the old direction or the sopposite direction
             int oldDirection = m_particleSnake[i].direction;
-            while( (oldDirection % 2) == (m_particleSnake[i].direction % 2) ) {
+            while ((oldDirection % 2) == (m_particleSnake[i].direction % 2))
+            {
                 // Set the new direction
-                m_particleSnake[i].direction = (rand()%4);
+                m_particleSnake[i].direction = (rand() % 4);
             }
 
             // Determine a new random direction interval the particle snake
-            m_particleSnake[i].directionInterval = (rand()%90) + 10;
+            m_particleSnake[i].directionInterval = (rand() % 90) + 10;
 
             // Reset the timer
             m_particleSnake[i].intervalCounter = 0;
         }
 
         // Move the particle snake in the specified direction
-        if( m_particleSnake[i].direction == SNAKE_MOVE_UP )
+        if (m_particleSnake[i].direction == SNAKE_MOVE_UP)
         {
             m_particleSnake[i].y += (m_particleSnake[i].speed * this->GetActionInterval(60) / 1.0f);
         }
-        else if( m_particleSnake[i].direction == SNAKE_MOVE_RIGHT )
+        else if (m_particleSnake[i].direction == SNAKE_MOVE_RIGHT)
         {
             m_particleSnake[i].x += (m_particleSnake[i].speed * this->GetActionInterval(60) / 1.0f);
         }
-        else if( m_particleSnake[i].direction == SNAKE_MOVE_DOWN )
+        else if (m_particleSnake[i].direction == SNAKE_MOVE_DOWN)
         {
             m_particleSnake[i].y -= (m_particleSnake[i].speed * this->GetActionInterval(60) / 1.0f);
         }
-        else if( m_particleSnake[i].direction == SNAKE_MOVE_LEFT )
+        else if (m_particleSnake[i].direction == SNAKE_MOVE_LEFT)
         {
             m_particleSnake[i].x -= (m_particleSnake[i].speed * this->GetActionInterval(60) / 1.0f);
         }
 
         // Has the particle snake reached the edge of the screen?
-        if(
-           (m_particleSnake[i].x > (INTERNAL_RES_X + SNAKE_ELEMENT_WIDTH)) || // ((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH))) ||
-           (m_particleSnake[i].y > (INTERNAL_RES_Y + SNAKE_ELEMENT_HEIGHT)) || // ((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT))) ||
-           (m_particleSnake[i].x < 0) ||
-           (m_particleSnake[i].y < 0) )
+        if (
+            (m_particleSnake[i].x > (INTERNAL_RES_X + SNAKE_ELEMENT_WIDTH)) ||  // ((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH))) ||
+            (m_particleSnake[i].y > (INTERNAL_RES_Y + SNAKE_ELEMENT_HEIGHT)) || // ((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT))) ||
+            (m_particleSnake[i].x < 0) ||
+            (m_particleSnake[i].y < 0))
         {
             // Determine a random start direction for the particle snake
-            m_particleSnake[i].direction = (rand()%4);
+            m_particleSnake[i].direction = (rand() % 4);
 
             // Depending on the directio, set random starting coordinates
-            if( m_particleSnake[i].direction == SNAKE_MOVE_UP )
+            if (m_particleSnake[i].direction == SNAKE_MOVE_UP)
             {
-                m_particleSnake[i].x = (rand()%((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH)));
+                m_particleSnake[i].x = (rand() % ((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH)));
                 m_particleSnake[i].y = 0;
             }
-            else if( m_particleSnake[i].direction == SNAKE_MOVE_RIGHT )
+            else if (m_particleSnake[i].direction == SNAKE_MOVE_RIGHT)
             {
                 m_particleSnake[i].x = 0;
-                m_particleSnake[i].y = (rand()%((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT)));
+                m_particleSnake[i].y = (rand() % ((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT)));
             }
-            else if( m_particleSnake[i].direction == SNAKE_MOVE_DOWN )
+            else if (m_particleSnake[i].direction == SNAKE_MOVE_DOWN)
             {
-                m_particleSnake[i].x = (rand()%((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH)));
+                m_particleSnake[i].x = (rand() % ((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH)));
                 m_particleSnake[i].y = ((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT));
             }
-            else if( m_particleSnake[i].direction == SNAKE_MOVE_LEFT )
+            else if (m_particleSnake[i].direction == SNAKE_MOVE_LEFT)
             {
                 m_particleSnake[i].x = ((m_rcScreen.right - m_rcScreen.left) - ((m_rcScreen.right - m_rcScreen.left) % SNAKE_ELEMENT_WIDTH));
-                m_particleSnake[i].y = (rand()%((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT)));;
+                m_particleSnake[i].y = (rand() % ((m_rcScreen.top - m_rcScreen.bottom) - ((m_rcScreen.top - m_rcScreen.bottom) % SNAKE_ELEMENT_HEIGHT)));
+                ;
             }
 
             // Set a random movement speed
-            m_particleSnake[i].speed = (rand()%MAX_PARTICLE_SNAKE_SPEED) + MIN_PARTICLE_SNAKE_SPEED;
+            m_particleSnake[i].speed = (rand() % MAX_PARTICLE_SNAKE_SPEED) + MIN_PARTICLE_SNAKE_SPEED;
 
             // Set a random length
-            m_particleSnake[i].length = (rand()%MAX_PARTICLE_SNAKE_LENGTH) + MIN_PARTICLE_SNAKE_LENGTH;
+            m_particleSnake[i].length = (rand() % MAX_PARTICLE_SNAKE_LENGTH) + MIN_PARTICLE_SNAKE_LENGTH;
 
             // Create random colors for the particle snake
             // int randomColor = (rand()%2);
             // if(randomColor == 0 ) {
-                // m_particleSnake[i].color.fRed = 1.0f;
-                // m_particleSnake[i].color.fGreen = 0.0f;
-                // m_particleSnake[i].color.fBlue = 1.0f;
+            // m_particleSnake[i].color.fRed = 1.0f;
+            // m_particleSnake[i].color.fGreen = 0.0f;
+            // m_particleSnake[i].color.fBlue = 1.0f;
             // }
             // else if(randomColor == 1 ) {
-                // m_particleSnake[i].color.fRed = 0.0f;
-                // m_particleSnake[i].color.fGreen = 1.0f;
-                // m_particleSnake[i].color.fBlue = 1.0f;
+            // m_particleSnake[i].color.fRed = 0.0f;
+            // m_particleSnake[i].color.fGreen = 1.0f;
+            // m_particleSnake[i].color.fBlue = 1.0f;
             // }
-            m_particleSnake[i].color.fRed = (float(rand()%90) / 100.0f) + 0.1f;
-            m_particleSnake[i].color.fGreen = float(rand()%90) / 100.0f + 0.1f;
-            m_particleSnake[i].color.fBlue = float(rand()%90) / 100.0f + 0.1f;
-            m_particleSnake[i].color.fAlpha = (float(rand()%75) / 100.0f) + 0.25f;
+            m_particleSnake[i].color.fRed = (float(rand() % 90) / 100.0f) + 0.1f;
+            m_particleSnake[i].color.fGreen = float(rand() % 90) / 100.0f + 0.1f;
+            m_particleSnake[i].color.fBlue = float(rand() % 90) / 100.0f + 0.1f;
+            m_particleSnake[i].color.fAlpha = (float(rand() % 75) / 100.0f) + 0.25f;
         }
     }
 
@@ -1721,7 +1712,7 @@ BOOL GS_Snake::TitleScreen()
     this->RenderBackground();
 
     // For every particle snake
-    for( int i = 0; i < MAX_PARTICLE_SNAKES; i++ )
+    for (int i = 0; i < MAX_PARTICLE_SNAKES; i++)
     {
         // Set the particle effect color
         m_snakeParticle.SetModulateColor(m_particleSnake[i].color.fRed, m_particleSnake[i].color.fGreen, m_particleSnake[i].color.fBlue, m_particleSnake[i].color.fAlpha);
@@ -1758,18 +1749,18 @@ BOOL GS_Snake::TitleScreen()
 
     // m_gsFont.SetRotateX(0);
 
-//    // Adjust the title sprite alpha effect
-//    m_gsTitleSprite.SetModulateColor(1.0f, 1.0f, 1.0f, fTitleAlpha);
-//
-//    // Adjust the title sprite scale
-//    m_gsTitleSprite.SetScaleXY( (1.0f + fTitleAlpha * 0.05f), (1.0f + fTitleAlpha * 0.05f) );
-//
-//    // Position the title centered in the top half of the screen.
-//    m_gsTitleSprite.SetDestX((INTERNAL_RES_X - m_gsTitleSprite.GetScaledWidth()) / 2);
-//    m_gsTitleSprite.SetDestY((INTERNAL_RES_Y / 2) + (((INTERNAL_RES_Y / 2) - m_gsTitleSprite.GetHeight()) / 4));
-//
-//    // Render the title images.
-//    m_gsTitleSprite.Render();
+    //    // Adjust the title sprite alpha effect
+    //    m_gsTitleSprite.SetModulateColor(1.0f, 1.0f, 1.0f, fTitleAlpha);
+    //
+    //    // Adjust the title sprite scale
+    //    m_gsTitleSprite.SetScaleXY( (1.0f + fTitleAlpha * 0.05f), (1.0f + fTitleAlpha * 0.05f) );
+    //
+    //    // Position the title centered in the top half of the screen.
+    //    m_gsTitleSprite.SetDestX((INTERNAL_RES_X - m_gsTitleSprite.GetScaledWidth()) / 2);
+    //    m_gsTitleSprite.SetDestY((INTERNAL_RES_Y / 2) + (((INTERNAL_RES_Y / 2) - m_gsTitleSprite.GetHeight()) / 4));
+    //
+    //    // Render the title images.
+    //    m_gsTitleSprite.Render();
 
     // Position the menu centered in the bottom half of the screen.
     m_gsMenu.SetDestX((INTERNAL_RES_X - m_gsMenu.GetWidth()) / 2);
@@ -1786,7 +1777,7 @@ BOOL GS_Snake::TitleScreen()
     m_gsFont.SetText("VERSION %s", GAME_VERSION);
     m_gsFont.SetScaleXY(0.5f, 0.5f);
     m_gsFont.SetDestX(INTERNAL_RES_X - m_gsFont.GetTextWidth() - m_gsFont.GetLetterWidth());
-    m_gsFont.SetDestY((m_gsFont.GetTextHeight() * 2)) ;
+    m_gsFont.SetDestY((m_gsFont.GetTextHeight() * 2));
     m_gsFont.Render();
 
     // Reset the default font values
@@ -1818,9 +1809,7 @@ BOOL GS_Snake::TitleScreen()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::TitleOutro():
@@ -1854,7 +1843,7 @@ BOOL GS_Snake::TitleOutro()
     if (m_bIsInitialized == FALSE)
     {
         // Initialize method variables.
-        m_fAlpha    = 1.0f;
+        m_fAlpha = 1.0f;
         // Initialization completed.
         m_bIsInitialized = TRUE;
     }
@@ -1897,20 +1886,20 @@ BOOL GS_Snake::TitleOutro()
     // // For every particle snake
     // for( int i = 0; i < MAX_PARTICLE_SNAKES; i++ )
     // {
-        // // Set the particle effect color
-        // m_snakeParticle.SetModulateColor(
-            // m_particleSnake[i].color.fRed,
-            // m_particleSnake[i].color.fGreen,
-            // m_particleSnake[i].color.fBlue,
-            // (m_particleSnake[i].color.fAlpha < m_fAlpha ? m_particleSnake[i].color.fAlpha : m_fAlpha)
-        // );
+    // // Set the particle effect color
+    // m_snakeParticle.SetModulateColor(
+    // m_particleSnake[i].color.fRed,
+    // m_particleSnake[i].color.fGreen,
+    // m_particleSnake[i].color.fBlue,
+    // (m_particleSnake[i].color.fAlpha < m_fAlpha ? m_particleSnake[i].color.fAlpha : m_fAlpha)
+    // );
 
-        // // Update the particle snake position
-        // m_snakeParticle.SetDestX(m_particleSnake[i].x);
-        // m_snakeParticle.SetDestY(m_particleSnake[i].y);
+    // // Update the particle snake position
+    // m_snakeParticle.SetDestX(m_particleSnake[i].x);
+    // m_snakeParticle.SetDestY(m_particleSnake[i].y);
 
-        // // render the particle snake
-        // m_snakeParticle.Render();
+    // // render the particle snake
+    // m_snakeParticle.Render();
     // }
 
     // // Display the title centered on the screen
@@ -1962,14 +1951,11 @@ BOOL GS_Snake::TitleOutro()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Option Screen Methods *******************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::OptionIntro():
@@ -2055,9 +2041,7 @@ BOOL GS_Snake::OptionIntro()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::OptionScreen():
@@ -2087,7 +2071,7 @@ BOOL GS_Snake::OptionScreen()
     // Do Method Initialization /////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////
 
-    char cTempString[64] = { 0 };
+    char cTempString[64] = {0};
 
     BOOL bLeftPressed = TRUE;
 
@@ -2103,7 +2087,7 @@ BOOL GS_Snake::OptionScreen()
         m_nOldMouseY = m_gsMouse.GetY();
         m_bWasMouseReleased = FALSE;
         // Set the game settings to the current display settings.
-        m_gsSettings.bEnableVSync  = m_gsDisplay.IsVSyncEnabled();
+        m_gsSettings.bEnableVSync = m_gsDisplay.IsVSyncEnabled();
         m_gsSettings.fFrameCap = this->GetFrameRate();
         m_gsSettings.bWindowedMode = this->IsWindowed();
         // Clear all current menu items.
@@ -2167,18 +2151,21 @@ BOOL GS_Snake::OptionScreen()
     {
     // Was the up key pressed?
     case GSK_UP:
+    case GSC_BUTTON_DPAD_UP:
         // Highlight previous option.
         m_gsMenu.HighlightPrev();
         m_gsSound.PlaySample(SAMPLE_OPTION);
         break;
     // Was the down key pressed?
     case GSK_DOWN:
+    case GSC_BUTTON_DPAD_DOWN:
         // Highlight next option.
         m_gsMenu.HighlightNext();
         m_gsSound.PlaySample(SAMPLE_OPTION);
         break;
     // Was the left key pressed?
     case GSK_LEFT:
+    case GSC_BUTTON_DPAD_LEFT:
         // Is the last option not highlighted?
         if (m_gsMenu.GetHighlight() != 7)
         {
@@ -2190,6 +2177,7 @@ BOOL GS_Snake::OptionScreen()
         break;
     // Was the right key pressed?
     case GSK_RIGHT:
+    case GSC_BUTTON_DPAD_RIGHT:
         // Is the last option not highlighted?
         if (m_gsMenu.GetHighlight() != 7)
         {
@@ -2201,12 +2189,14 @@ BOOL GS_Snake::OptionScreen()
         break;
     // Was the enter key pressed?
     case GSK_ENTER:
+    case GSC_BUTTON_A:
         // Remeber which option is highlighted.
         m_nOptionSelected = m_gsMenu.GetHighlight();
         m_gsSound.PlaySample(SAMPLE_SELECT);
         break;
     // Was the escape key pressed?
     case GSK_ESCAPE:
+    case GSC_BUTTON_B:
         // Progress to the next section.
         m_nGameProgress = m_nNextProgress;
         m_gsSound.PlaySample(SAMPLE_SELECT);
@@ -2414,7 +2404,7 @@ BOOL GS_Snake::OptionScreen()
     this->RenderBackground(0.5f);
 
     // Position the menu centered horizontally and vertically in the screen.
-    m_gsMenu.SetDestX((INTERNAL_RES_X -  m_gsMenu.GetWidth()) / 2);
+    m_gsMenu.SetDestX((INTERNAL_RES_X - m_gsMenu.GetWidth()) / 2);
     m_gsMenu.SetDestY((INTERNAL_RES_Y - m_gsMenu.GetHeight()) / 2);
 
     // Render the menu using the specified colors.
@@ -2456,15 +2446,13 @@ BOOL GS_Snake::OptionScreen()
         // Save game settings.
         this->SaveSettings();
         // Reset method variables.
-        m_bIsInitialized  = FALSE;
+        m_bIsInitialized = FALSE;
     }
 
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::OptionOutro():
@@ -2550,14 +2538,11 @@ BOOL GS_Snake::OptionOutro()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Game Play Methods ***********************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::PlayIntro():
@@ -2635,27 +2620,32 @@ BOOL GS_Snake::PlayIntro()
     {
     // Was the up key pressed?
     case GSK_UP:
+    case GSC_BUTTON_DPAD_UP:
         // Highlight the previous option.
         m_gsMenu.HighlightPrev();
         m_gsSound.PlaySample(SAMPLE_OPTION);
         break;
     // Was the down key pressed?
     case GSK_DOWN:
+    case GSC_BUTTON_DPAD_DOWN:
         // Highlight the next option.
         m_gsMenu.HighlightNext();
         m_gsSound.PlaySample(SAMPLE_OPTION);
         break;
     // Was the enter key pressed?
     case GSK_ENTER:
+    case GSC_BUTTON_A:
         // Remeber which option is highlighted.
         m_nOptionSelected = m_gsMenu.GetHighlight();
         m_gsSound.PlaySample(SAMPLE_SELECT);
         break;
     // Was the escape key pressed?
     case GSK_ESCAPE:
+    case GSC_BUTTON_B:
         // Return to the title screen.
         m_nGameProgress = TITLE_INTRO;
         m_bWasKeyReleased = FALSE;
+        m_bWasButtonReleased = FALSE;
         break;
     }
 
@@ -2775,7 +2765,7 @@ BOOL GS_Snake::PlayIntro()
     m_gsDisplay.BeginRender2D(this->GetWindow());
 
     // Center the menu horizontally and vertically in the screen.
-    m_gsMenu.SetDestX((INTERNAL_RES_X - m_gsMenu.GetWidth())  / 2);
+    m_gsMenu.SetDestX((INTERNAL_RES_X - m_gsMenu.GetWidth()) / 2);
     m_gsMenu.SetDestY((INTERNAL_RES_Y - m_gsMenu.GetHeight()) / 2);
 
     // Render the menu to the back surface using the specified colors.
@@ -2800,7 +2790,7 @@ BOOL GS_Snake::PlayIntro()
         // Remember where we've come from.
         m_nPrevProgress = PLAY_INTRO;
         // Reset method variables.
-        m_bIsInitialized  = FALSE;
+        m_bIsInitialized = FALSE;
         // Are we about to start playing the game?
         if (m_nGameProgress == PLAY_GAME)
         {
@@ -2809,13 +2799,10 @@ BOOL GS_Snake::PlayIntro()
         }
     }
 
-
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::PlayGame():
@@ -2854,7 +2841,7 @@ BOOL GS_Snake::PlayGame()
         // Reset class variables.
         m_nPrevProgress = PLAY_GAME;
         m_fInterval = 0.0f;
-        m_nCounter  = 0;
+        m_nCounter = 0;
 
         // Set default game values
         m_currentWorld = 1;
@@ -2864,7 +2851,7 @@ BOOL GS_Snake::PlayGame()
         m_lScore = 0l;
 
         // Load the level
-        m_level.Load( m_currentLevel );
+        m_level.Load(m_currentLevel);
         m_nGameProgress = PLAY_UPDATE;
 
         // Re-create the snake
@@ -2874,20 +2861,23 @@ BOOL GS_Snake::PlayGame()
         // Re-create the rat
         int ratX = (m_rcPlayArea.right - m_rcPlayArea.left) - (((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / 4);
         int ratY = (((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) / 2 * RAT_ELEMENT_HEIGHT;
-        m_rat.Reset(ratX, ratY,RAT_MOVEMENT_INTERVAL_MAX);
-        m_rat.SetState( m_defaultRatState );
+        m_rat.Reset(ratX, ratY, RAT_MOVEMENT_INTERVAL_MAX);
+        m_rat.SetState(m_defaultRatState);
 
         // Is the game in hard mode?
-        if( m_gameMode == HARD_MODE ) {
+        if (m_gameMode == HARD_MODE)
+        {
             // Speed-up the game
-            for( int i = 0; i < 3; i++ ) {
+            for (int i = 0; i < 3; i++)
+            {
                 m_snake.Speedup();
                 m_rat.Speedup();
             }
         }
 
         // Speed-up the game depending on the world level
-        for( int i =0; i < m_currentWorld; i++ ) {
+        for (int i = 0; i < m_currentWorld; i++)
+        {
             m_snake.Speedup();
             m_rat.Speedup();
         }
@@ -2915,74 +2905,79 @@ BOOL GS_Snake::PlayGame()
     // Act depending on which key was pressed.
     switch (nKey)
     {
-        // Was left arrow key pressed?
-        case GSK_LEFT:
-            // Move the snake in the appropriate direction
-            m_snake.SetMovementDirection(SNAKE_MOVE_LEFT);
-            break;
-        // Was right arrow key pressed?
-        case GSK_RIGHT:
-            // Move the snake in the appropriate direction
-            m_snake.SetMovementDirection(SNAKE_MOVE_RIGHT);
-            break;
-        // Was down arrow key pressed?
-        case GSK_DOWN:
-            // Move the snake in the appropriate direction
-            m_snake.SetMovementDirection(SNAKE_MOVE_DOWN);
-            break;
-        // Was up arrow key pressed?
-        case GSK_UP:
-            // Move the snake in the appropriate direction
-            m_snake.SetMovementDirection(SNAKE_MOVE_UP);
-            break;
-        // Was the 'M' key pressed?
-        case GSK_M:
-            // Is the music volume muted?
-            if (m_gsSound.GetStreamVolume() == 0)
-            {
-                // Set the music volume to the game settings volume.
-                m_gsSound.SetStreamVolume(m_gsSettings.nMusicVolume);
-            }
-            else
-            {
-                // Mute the music volume.
-                m_gsSound.SetStreamVolume(0);
-            }
-            m_gsKeyboard.ClearBuffer();
-            break;
-        // Was the 'S' key pressed?
-        case GSK_S:
-            // Is the sound effects volume muted?
-            if (m_gsSound.GetSampleMaster() == 0)
-            {
-                // Set the sound effects volume to the game settings volume.
-                m_gsSound.SetSampleMaster(m_gsSettings.nEffectsVolume);
-            }
-            else
-            {
-                // Mute the sound effects volume.
-                m_gsSound.SetSampleMaster(0);
-            }
-            m_gsKeyboard.ClearBuffer();
-            break;
-        /*
-        // Was the spacebar key pressed?
-        case GSK_SPACE:
-            // Go to the play exit method.
-            m_nGameProgress = PLAY_OUTRO;
-            m_gsKeyboard.ClearBuffer();
-            break;
-        */
-        // Was the escape key pressed?
-        case GSK_ESCAPE:
-            // Go to the play exit method.
-            m_nGameProgress = PLAY_EXIT;
-            m_gsKeyboard.ClearBuffer();
-            break;
-        default:
-            // ...
-            m_gsKeyboard.ClearBuffer();
-            break;
+    // Was left arrow key pressed?
+    case GSK_LEFT:
+    case GSC_BUTTON_DPAD_LEFT:
+        // Move the snake in the appropriate direction
+        m_snake.SetMovementDirection(SNAKE_MOVE_LEFT);
+        break;
+    // Was right arrow key pressed?
+    case GSK_RIGHT:
+    case GSC_BUTTON_DPAD_RIGHT:
+        // Move the snake in the appropriate direction
+        m_snake.SetMovementDirection(SNAKE_MOVE_RIGHT);
+        break;
+    // Was down arrow key pressed?
+    case GSK_DOWN:
+    case GSC_BUTTON_DPAD_DOWN:
+        // Move the snake in the appropriate direction
+        m_snake.SetMovementDirection(SNAKE_MOVE_DOWN);
+        break;
+    // Was up arrow key pressed?
+    case GSK_UP:
+    case GSC_BUTTON_DPAD_UP:
+        // Move the snake in the appropriate direction
+        m_snake.SetMovementDirection(SNAKE_MOVE_UP);
+        break;
+    // Was the 'M' key pressed?
+    case GSK_M:
+        // Is the music volume muted?
+        if (m_gsSound.GetStreamVolume() == 0)
+        {
+            // Set the music volume to the game settings volume.
+            m_gsSound.SetStreamVolume(m_gsSettings.nMusicVolume);
+        }
+        else
+        {
+            // Mute the music volume.
+            m_gsSound.SetStreamVolume(0);
+        }
+        m_gsKeyboard.ClearBuffer();
+        break;
+    // Was the 'S' key pressed?
+    case GSK_S:
+        // Is the sound effects volume muted?
+        if (m_gsSound.GetSampleMaster() == 0)
+        {
+            // Set the sound effects volume to the game settings volume.
+            m_gsSound.SetSampleMaster(m_gsSettings.nEffectsVolume);
+        }
+        else
+        {
+            // Mute the sound effects volume.
+            m_gsSound.SetSampleMaster(0);
+        }
+        m_gsKeyboard.ClearBuffer();
+        break;
+    /*
+    // Was the spacebar key pressed?
+    case GSK_SPACE:
+        // Go to the play exit method.
+        m_nGameProgress = PLAY_OUTRO;
+        m_gsKeyboard.ClearBuffer();
+        break;
+    */
+    // Was the escape key pressed?
+    case GSK_ESCAPE:
+    case GSC_BUTTON_B:
+        // Go to the play exit method.
+        m_nGameProgress = PLAY_EXIT;
+        m_gsKeyboard.ClearBuffer();
+        break;
+    default:
+        // ...
+        m_gsKeyboard.ClearBuffer();
+        break;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -3004,7 +2999,8 @@ BOOL GS_Snake::PlayGame()
         m_snake.Update();
 
         // Has the snake's movement direction changed?
-        if( m_snake.GetMovementDirection() != nOldSnakeDirection ) {
+        if (m_snake.GetMovementDirection() != nOldSnakeDirection)
+        {
             // Play the appropriate sound effect
             m_gsSound.PlaySample(SAMPLE_SNAKE_INPUT);
 
@@ -3013,90 +3009,102 @@ BOOL GS_Snake::PlayGame()
         }
 
         // Get the snake head coordinates at the current position
-        m_snake.GetCollideRect( &rcSnakeHead );
+        m_snake.GetCollideRect(&rcSnakeHead);
 
         // Is the snake not dead or dying?
-        if( m_snake.GetState() < SNAKE_STATE_DYING ) {
+        if (m_snake.GetState() < SNAKE_STATE_DYING)
+        {
             // Has the snake head collided with it's body or an element on the map?
-            if( (m_snake.CheckCollision(rcSnakeHead, TRUE) == SNAKE_COLLIDE_BODY) || (m_level.CheckCollision(rcSnakeHead)) ) {
+            if ((m_snake.CheckCollision(rcSnakeHead, TRUE) == SNAKE_COLLIDE_BODY) || (m_level.CheckCollision(rcSnakeHead)))
+            {
                 // The snake died
-                m_snake.SetState( SNAKE_STATE_DYING );
+                m_snake.SetState(SNAKE_STATE_DYING);
 
                 // Play the appropriate sound effect
                 m_gsSound.PlaySample(SAMPLE_SNAKE_DYING);
 
                 // Kill the rat as well
-                m_rat.SetState( RAT_STATE_EATEN );
-// std::cout << "Bonk!\n";
+                m_rat.SetState(RAT_STATE_EATEN);
+                // std::cout << "Bonk!\n";
             }
         }
-        else if( m_snake.GetState() == SNAKE_STATE_DEAD ) {
+        else if (m_snake.GetState() == SNAKE_STATE_DEAD)
+        {
             // The player loses a life
             m_lives--;
             m_nGameProgress = PLAY_UPDATE;
 
             // Has the player lost all his lives?
-            if( m_lives <= 0 ) {
+            if (m_lives <= 0)
+            {
                 // Stop playing the game
                 m_nGameProgress = PLAY_OUTRO;
             }
-            else {
+            else
+            {
                 // Reset the snake
                 m_snake.Reset(m_level.GetSnakeStartX(), m_level.GetSnakeStartY());
                 m_snake.SetState(SNAKE_STATE_MOVING);
 
                 // Respawn the rat
-                int ratX = (rand()%(((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
-                int ratY = (rand()%(((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
+                int ratX = (rand() % (((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
+                int ratY = (rand() % (((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
                 m_rat.SetPosition(ratX, ratY);
-                m_rat.GetCollideRect( &rcRat, RAT_MOVE_NONE );
+                m_rat.GetCollideRect(&rcRat, RAT_MOVE_NONE);
 
                 // Make certain the rat does not respawn on the snake or the level
-                while( (m_snake.CheckCollision(rcRat) != SNAKE_COLLIDE_NONE) || (m_level.CheckCollision(rcRat))) {
-                    ratX = (rand()%(((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
-                    ratY = (rand()%(((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
+                while ((m_snake.CheckCollision(rcRat) != SNAKE_COLLIDE_NONE) || (m_level.CheckCollision(rcRat)))
+                {
+                    ratX = (rand() % (((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
+                    ratY = (rand() % (((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
                     m_rat.SetPosition(ratX, ratY);
-                    m_rat.GetCollideRect( &rcRat, RAT_MOVE_NONE );
+                    m_rat.GetCollideRect(&rcRat, RAT_MOVE_NONE);
                 }
 
                 // Reset the rat and start it moving again
                 m_rat.Reset(ratX, ratY);
-                m_rat.SetState( m_defaultRatState );
+                m_rat.SetState(m_defaultRatState);
 
                 // Clear the keyboard buffer
                 m_gsKeyboard.ClearBuffer();
             }
-// std::cout << "Game Over\n";
+            // std::cout << "Game Over\n";
         }
 
         // Can the rat be eaten?
-        if( m_rat.GetState() == m_defaultRatState ) {
+        if (m_rat.GetState() == m_defaultRatState)
+        {
             // Get the rat coordinates at the current position
-            m_rat.GetCollideRect( &rcRat, RAT_MOVE_NONE );
+            m_rat.GetCollideRect(&rcRat, RAT_MOVE_NONE);
 
             // Has the snake head collided with the rat?
-            if( m_snake.CheckCollision(rcRat) == SNAKE_COLLIDE_HEAD ) {
+            if (m_snake.CheckCollision(rcRat) == SNAKE_COLLIDE_HEAD)
+            {
                 // Update the player score
-                if( m_gameMode == EASY_MODE ) {
-                    m_lScore += ( ((RATE_BASE_SCORE * m_currentLevel) / 2) * m_currentWorld);
+                if (m_gameMode == EASY_MODE)
+                {
+                    m_lScore += (((RATE_BASE_SCORE * m_currentLevel) / 2) * m_currentWorld);
                 }
-                else if( m_gameMode == HARD_MODE ) {
-                    m_lScore += ( ((RATE_BASE_SCORE * m_currentLevel) + ((RATE_BASE_SCORE * m_currentLevel) / 2)) * m_currentWorld);
+                else if (m_gameMode == HARD_MODE)
+                {
+                    m_lScore += (((RATE_BASE_SCORE * m_currentLevel) + ((RATE_BASE_SCORE * m_currentLevel) / 2)) * m_currentWorld);
                 }
-                else {
-                    m_lScore += ( (RATE_BASE_SCORE * m_currentLevel) * m_currentWorld);
+                else
+                {
+                    m_lScore += ((RATE_BASE_SCORE * m_currentLevel) * m_currentWorld);
                 }
                 m_ratsEaten++;
 
                 // Eat the rat
-                m_rat.SetState( RAT_STATE_EATEN );
+                m_rat.SetState(RAT_STATE_EATEN);
 
                 // Play the appropriate sound effect
                 m_gsSound.SetSamplePanning(SAMPLE_RAT_DYING, round(float(rcRat.right) / m_rcPlayArea.right * 255.0f));
                 m_gsSound.PlaySample(SAMPLE_RAT_DYING);
 
                 // Grow the snake by the specified number of segments
-                if( m_snake.Grow(16) ) {
+                if (m_snake.Grow(16))
+                {
                     // Play the appropriate sound effect
                     m_gsSound.PlaySample(SAMPLE_SNAKE_GROWING);
                 }
@@ -3107,69 +3115,77 @@ BOOL GS_Snake::PlayGame()
                 // Make the rats faster
                 m_rat.Speedup();
 
-// std::cout << "Yum!\n";
+                // std::cout << "Yum!\n";
             }
         }
-        else if( (m_rat.GetState() == RAT_STATE_DEAD) && (m_ratsEaten < RATS_PER_LEVEL) ) {
+        else if ((m_rat.GetState() == RAT_STATE_DEAD) && (m_ratsEaten < RATS_PER_LEVEL))
+        {
             // Is the snake still alive?
-            if( m_snake.GetState() < SNAKE_STATE_DYING ) {
+            if (m_snake.GetState() < SNAKE_STATE_DYING)
+            {
                 // Respawn the rat
-                int ratX = (rand()%(((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
-                int ratY = (rand()%(((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
+                int ratX = (rand() % (((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
+                int ratY = (rand() % (((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
                 m_rat.SetPosition(ratX, ratY);
-                m_rat.GetCollideRect( &rcRat, RAT_MOVE_NONE );
+                m_rat.GetCollideRect(&rcRat, RAT_MOVE_NONE);
 
                 // Make certain the rat does not respawn on the snake or the level
-                while( (m_snake.CheckCollision(rcRat) != SNAKE_COLLIDE_NONE) || (m_level.CheckCollision(rcRat))) {
-                    ratX = (rand()%(((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
-                    ratY = (rand()%(((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
+                while ((m_snake.CheckCollision(rcRat) != SNAKE_COLLIDE_NONE) || (m_level.CheckCollision(rcRat)))
+                {
+                    ratX = (rand() % (((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
+                    ratY = (rand() % (((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
                     m_rat.SetPosition(ratX, ratY);
-                    m_rat.GetCollideRect( &rcRat, RAT_MOVE_NONE );
+                    m_rat.GetCollideRect(&rcRat, RAT_MOVE_NONE);
                 }
 
                 // Start the rat moving again
-                m_rat.SetState( m_defaultRatState );
+                m_rat.SetState(m_defaultRatState);
             }
         }
 
         // Move the rat in a random direction
-        int ratMoveDirection = (rand()%4);
+        int ratMoveDirection = (rand() % 4);
 
         // Get the coordinates of the rat at the new position
-        m_rat.GetCollideRect( &rcRat, ratMoveDirection );
+        m_rat.GetCollideRect(&rcRat, ratMoveDirection);
 
         // Check if the movement causes a collision with the snake or the level
-        if( (m_snake.CheckCollision(rcRat) != SNAKE_COLLIDE_NONE) || (m_level.CheckCollision(rcRat)) ) {
+        if ((m_snake.CheckCollision(rcRat) != SNAKE_COLLIDE_NONE) || (m_level.CheckCollision(rcRat)))
+        {
             // Try to move the rat in a different direction
-            for( int i = 0; i < 4; i++ ) {
+            for (int i = 0; i < 4; i++)
+            {
                 // Skip the direction already tested
-                if( i == ratMoveDirection ) continue;
+                if (i == ratMoveDirection)
+                    continue;
 
                 // Get the coordinates of the rat at the new position
-                m_rat.GetCollideRect( &rcRat, i );
+                m_rat.GetCollideRect(&rcRat, i);
 
                 // Was there no collision?
-                if( (m_snake.CheckCollision(rcRat) == SNAKE_COLLIDE_NONE) && (!m_level.CheckCollision(rcRat)) ) {
+                if ((m_snake.CheckCollision(rcRat) == SNAKE_COLLIDE_NONE) && (!m_level.CheckCollision(rcRat)))
+                {
                     // Move the rat in the specified direction
-                    m_rat.SetMovementDirection( i );
+                    m_rat.SetMovementDirection(i);
                     break;
                 }
             }
-
         }
-        else {
+        else
+        {
             // Move the rat in the specified direction
-            m_rat.SetMovementDirection( ratMoveDirection );
+            m_rat.SetMovementDirection(ratMoveDirection);
         }
 
         // Get the rat coordinates at the current position
-        m_rat.GetCollideRect( &rcRat, RAT_MOVE_NONE );
+        m_rat.GetCollideRect(&rcRat, RAT_MOVE_NONE);
 
         // Update the rat
         m_rat.Update();
 
         // Has the rat moved?
-        if( (m_rat.GetState() == RAT_STATE_MOVING) && ( (m_rat.GetDestX() != rcRat.left) || (m_rat.GetDestY() != rcRat.bottom) ) ) {
+        if ((m_rat.GetState() == RAT_STATE_MOVING) && ((m_rat.GetDestX() != rcRat.left) || (m_rat.GetDestY() != rcRat.bottom)))
+        {
 
             // Play the appropriate sound effect
             m_gsSound.SetSampleVolume(SAMPLE_RAT_MOVING, 63);
@@ -3178,12 +3194,14 @@ BOOL GS_Snake::PlayGame()
         }
 
         // Have all the rats for the level been eaten?
-        if( (m_ratsEaten >= RATS_PER_LEVEL) ) { // && (m_rat.GetState() == RAT_STATE_DEAD) ) {
+        if ((m_ratsEaten >= RATS_PER_LEVEL))
+        { // && (m_rat.GetState() == RAT_STATE_DEAD) ) {
             // Go to the next level
             m_currentLevel++;
 
             // Have we reached the last level?
-            if( m_currentLevel > MAX_LEVEL ) {
+            if (m_currentLevel > MAX_LEVEL)
+            {
                 // Go to the next world
                 m_currentWorld++;
 
@@ -3192,7 +3210,7 @@ BOOL GS_Snake::PlayGame()
             }
 
             // Load the new level
-            m_level.Load( m_currentLevel );
+            m_level.Load(m_currentLevel);
             m_nGameProgress = PLAY_UPDATE;
 
             // Reset the snake
@@ -3201,34 +3219,38 @@ BOOL GS_Snake::PlayGame()
             m_ratsEaten = 0;
 
             // Respawn the rat
-            int ratX = (rand()%(((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
-            int ratY = (rand()%(((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
+            int ratX = (rand() % (((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
+            int ratY = (rand() % (((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
             m_rat.SetPosition(ratX, ratY);
-            m_rat.GetCollideRect( &rcRat, RAT_MOVE_NONE );
+            m_rat.GetCollideRect(&rcRat, RAT_MOVE_NONE);
 
             // Make certain the rat does not respawn on the snake or the level
-            while( (m_snake.CheckCollision(rcRat) != SNAKE_COLLIDE_NONE) || (m_level.CheckCollision(rcRat))) {
-                ratX = (rand()%(((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
-                ratY = (rand()%(((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
+            while ((m_snake.CheckCollision(rcRat) != SNAKE_COLLIDE_NONE) || (m_level.CheckCollision(rcRat)))
+            {
+                ratX = (rand() % (((m_rcPlayArea.right - m_rcPlayArea.left) - ((m_rcPlayArea.right - m_rcPlayArea.left) % RAT_ELEMENT_WIDTH)) / RAT_ELEMENT_WIDTH) * RAT_ELEMENT_WIDTH);
+                ratY = (rand() % (((m_rcPlayArea.top - m_rcPlayArea.bottom) - ((m_rcPlayArea.top - m_rcPlayArea.bottom) % RAT_ELEMENT_HEIGHT)) / RAT_ELEMENT_HEIGHT) * RAT_ELEMENT_HEIGHT);
                 m_rat.SetPosition(ratX, ratY);
-                m_rat.GetCollideRect( &rcRat, RAT_MOVE_NONE );
+                m_rat.GetCollideRect(&rcRat, RAT_MOVE_NONE);
             }
 
             // Reset the rat and start it moving again
             m_rat.Reset(ratX, ratY, RAT_MOVEMENT_INTERVAL_MAX);
-            m_rat.SetState( m_defaultRatState );
+            m_rat.SetState(m_defaultRatState);
 
             // Is the game in hard mode?
-            if( m_gameMode == HARD_MODE ) {
+            if (m_gameMode == HARD_MODE)
+            {
                 // Speed-up the game
-                for( int i = 0; i < 3; i++ ) {
+                for (int i = 0; i < 3; i++)
+                {
                     m_snake.Speedup();
                     m_rat.Speedup();
                 }
             }
 
             // Speed-up the game depending on the world level
-            for( int i = 0; i < m_currentWorld; i++ ) {
+            for (int i = 0; i < m_currentWorld; i++)
+            {
                 m_snake.Speedup();
                 m_rat.Speedup();
             }
@@ -3240,7 +3262,6 @@ BOOL GS_Snake::PlayGame()
         // One action less to be taken.
         m_fInterval -= 1.0f;
     }
-
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Do Method Rendering //////////////////////////////////////////////////////////////////////
@@ -3294,9 +3315,7 @@ BOOL GS_Snake::PlayGame()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::PlayUpdate():
@@ -3338,7 +3357,7 @@ BOOL GS_Snake::PlayUpdate()
         fAlpha = 1.0f;
         nCounter = 3;
 
-       // Initialization completed.
+        // Initialization completed.
         m_bIsInitialized = TRUE;
     }
 
@@ -3358,7 +3377,8 @@ BOOL GS_Snake::PlayUpdate()
         nCounter--;
 
         // Has the counter reached zero?
-        if( nCounter <= 0 ) {
+        if (nCounter <= 0)
+        {
             // Progress to the next section
             m_nGameProgress = PLAY_GAME;
         }
@@ -3408,7 +3428,8 @@ BOOL GS_Snake::PlayUpdate()
     m_gsFont.Render();
 
     // Display the counter
-    if( nCounter > 0 ) {
+    if (nCounter > 0)
+    {
         m_gsFont.SetText("%d", nCounter);
         m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, fAlpha);
         m_gsFont.SetScaleXY(2.0f, 2.0f);
@@ -3416,7 +3437,6 @@ BOOL GS_Snake::PlayUpdate()
         m_gsFont.SetDestY((((INTERNAL_RES_Y / 2) - m_gsFont.GetTextHeight())) - m_gsFont.GetTextHeight());
         m_gsFont.Render();
     }
-
 
     // Reset display after rendering in 2D.
     m_gsDisplay.EndRender2D();
@@ -3440,9 +3460,7 @@ BOOL GS_Snake::PlayUpdate()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::PlayPause():
@@ -3531,13 +3549,13 @@ BOOL GS_Snake::PlayPause()
 
     // Display a message centered in the screen.
     m_gsFont.SetText("GAME PAUSED");
-    m_gsFont.SetDestX((INTERNAL_RES_X   -  m_gsFont.GetTextWidth()) / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(((INTERNAL_RES_Y - m_gsFont.GetTextHeight()) / 2) +
                       m_gsFont.GetTextHeight());
     m_gsFont.Render();
 
     m_gsFont.SetText("(PRESS P)");
-    m_gsFont.SetDestX((INTERNAL_RES_X   -  m_gsFont.GetTextWidth()) / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(((INTERNAL_RES_Y - m_gsFont.GetTextHeight()) / 2) -
                       m_gsFont.GetTextHeight());
     m_gsFont.Render();
@@ -3551,9 +3569,7 @@ BOOL GS_Snake::PlayPause()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::PlayExit():
@@ -3565,7 +3581,8 @@ BOOL GS_Snake::PlayPause()
 
 BOOL GS_Snake::PlayExit()
 {
-    int KeyList[6] = { GSK_ENTER, GSK_UP, GSK_DOWN, GSK_Y, GSK_N, GSK_ESCAPE };
+    int KeyList[6] = {GSK_ENTER, GSK_UP, GSK_DOWN, GSK_Y, GSK_N, GSK_ESCAPE};
+    int ButtonList[4] = {GSC_BUTTON_A, GSC_BUTTON_DPAD_UP, GSC_BUTTON_DPAD_DOWN, GSC_BUTTON_B};
 
     // Has the display not been initialized?
     if (!this->m_gsDisplay.IsReady())
@@ -3589,8 +3606,11 @@ BOOL GS_Snake::PlayExit()
     {
         // Initialize method variables.
         m_bWasKeyReleased = FALSE;
+        m_bWasButtonReleased = FALSE;
         // Clear keyboard buffer.
         m_gsKeyboard.ClearBuffer();
+        // Clear controller buffer.
+        m_gsController.ClearBuffer();
         // Setup variables for mouse input.
         m_nOldMouseX = m_gsMouse.GetX();
         m_nOldMouseY = m_gsMouse.GetY();
@@ -3657,7 +3677,7 @@ BOOL GS_Snake::PlayExit()
             m_bWasKeyReleased = FALSE;
         }
         break;
-    // Was the up key pressed?
+    // Was the Y key pressed?
     case GSK_Y:
         if (m_bWasKeyReleased)
         {
@@ -3667,7 +3687,7 @@ BOOL GS_Snake::PlayExit()
             m_bWasKeyReleased = FALSE;
         }
         break;
-    // Was the up key pressed?
+    // Was the N key pressed?
     case GSK_N:
         if (m_bWasKeyReleased)
         {
@@ -3693,6 +3713,62 @@ BOOL GS_Snake::PlayExit()
             // The no option was selected.
             m_nOptionSelected = 1;
             m_bWasKeyReleased = FALSE;
+        }
+        break;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Get Controller Input /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Were all the buttons in the button list released?
+    if (TRUE == m_gsController.AreButtonsUp(4, ButtonList))
+    {
+        m_bWasButtonReleased = TRUE;
+    }
+
+    // Check to see wether a button was pressed.
+    int nButton = m_gsController.GetBufferedButton();
+
+    // Act depending on button pressed.
+    switch (nButton)
+    {
+    // Was the up key pressed?
+    case GSC_BUTTON_DPAD_UP:
+        if (m_bWasButtonReleased)
+        {
+            // Highlight previous option.
+            m_gsMenu.HighlightPrev();
+            m_gsSound.PlaySample(SAMPLE_OPTION);
+            m_bWasButtonReleased = FALSE;
+        }
+        break;
+    // Was the down key pressed?
+    case GSC_BUTTON_DPAD_DOWN:
+        if (m_bWasButtonReleased)
+        {
+            // Highlight next option.
+            m_gsMenu.HighlightNext();
+            m_gsSound.PlaySample(SAMPLE_OPTION);
+            m_bWasButtonReleased = FALSE;
+        }
+        break;
+    // Was the enter key pressed?
+    case GSC_BUTTON_A:
+        if (m_bWasButtonReleased)
+        {
+            // Remeber the option selected.
+            m_nOptionSelected = m_gsMenu.GetHighlight();
+            m_bWasButtonReleased = FALSE;
+        }
+        break;
+    // Was the escape key pressed?
+    case GSC_BUTTON_B:
+        if (m_bWasButtonReleased)
+        {
+            // The no option was selected.
+            m_nOptionSelected = 1;
+            m_bWasButtonReleased = FALSE;
         }
         break;
     }
@@ -3809,7 +3885,7 @@ BOOL GS_Snake::PlayExit()
     this->RenderFrameRate(0.25f);
 
     // Center the menu horizontally and vertically on the screen.
-    m_gsMenu.SetDestX((INTERNAL_RES_X - m_gsMenu.GetWidth())  / 2);
+    m_gsMenu.SetDestX((INTERNAL_RES_X - m_gsMenu.GetWidth()) / 2);
     m_gsMenu.SetDestY((INTERNAL_RES_Y - m_gsMenu.GetHeight()) / 2);
 
     // Render the menu to the back surface using the specified colors.
@@ -3834,15 +3910,13 @@ BOOL GS_Snake::PlayExit()
         // Remember where we've come from.
         m_nPrevProgress = PLAY_EXIT;
         // Reset method variables.
-        m_bIsInitialized  = FALSE;
+        m_bIsInitialized = FALSE;
     }
 
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::PlayOutro():
@@ -3877,8 +3951,8 @@ BOOL GS_Snake::PlayOutro()
     {
         // Initialize method variables.
         m_fInterval = 0.0f;
-        m_nCounter  = 0;
-        m_fAlpha    = 1.0f;
+        m_nCounter = 0;
+        m_fAlpha = 1.0f;
         // Initialization completed.
         m_bIsInitialized = TRUE;
     }
@@ -3920,7 +3994,7 @@ BOOL GS_Snake::PlayOutro()
         else
         {
             // Is the score good enough to be a hiscore?
-            if (m_lScore > m_gsHiscores[MAX_SCORES-1].lScore)
+            if (m_lScore > m_gsHiscores[MAX_SCORES - 1].lScore)
             {
                 // Add the score to the hiscore table.
                 m_nNextProgress = SCORES_ADD;
@@ -3942,7 +4016,7 @@ BOOL GS_Snake::PlayOutro()
     /////////////////////////////////////////////////////////////////////////////////////////////
 
     // Clear the screen to the specified color.
-    glClearColor(1.0f-m_fAlpha, 1.0f-m_fAlpha, 1.0f-m_fAlpha, 0.0f);
+    glClearColor(1.0f - m_fAlpha, 1.0f - m_fAlpha, 1.0f - m_fAlpha, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Reset display.
@@ -3972,7 +4046,7 @@ BOOL GS_Snake::PlayOutro()
 
     // Display a message centered in the screen.
     m_gsFont.SetText("GAME OVER");
-    m_gsFont.SetDestX((INTERNAL_RES_X -  m_gsFont.GetTextWidth()) / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY((INTERNAL_RES_Y - m_gsFont.GetTextHeight()) / 2);
     m_gsFont.SetModulateColor(-1.0f, -1.0f, -1.0f, 1.0f - m_fAlpha);
     m_gsFont.Render();
@@ -4018,14 +4092,11 @@ BOOL GS_Snake::PlayOutro()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Hiscore Methods *************************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::ScoresIntro():
@@ -4126,9 +4197,7 @@ BOOL GS_Snake::ScoresIntro()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::ScoresView():
@@ -4158,9 +4227,9 @@ BOOL GS_Snake::ScoresView()
     // Do Method Initialization /////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////
 
-    char szTempString[128] = { 0 };
-    char szPaddedLevel[8] = { 0 };
-    char szPaddedMode[8] = { 0 };
+    char szTempString[128] = {0};
+    char szPaddedLevel[8] = {0};
+    char szPaddedMode[8] = {0};
 
     // Has the method not been initialized?
     if (m_bIsInitialized == FALSE)
@@ -4220,7 +4289,7 @@ BOOL GS_Snake::ScoresView()
     sprintf(szTempString, " TOP %02d SCORES ", MAX_SCORES);
     m_gsFont.SetScaleXY(1.5f, 1.5f);
     m_gsFont.SetText(szTempString);
-    m_gsFont.SetDestX((INTERNAL_RES_X -  m_gsFont.GetTextWidth())  / 2);
+    m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
     m_gsFont.SetDestY(((INTERNAL_RES_Y - (m_gsFont.GetTextHeight() * MAX_SCORES)) / 2) + ((MAX_SCORES + 1) * m_gsFont.GetTextHeight()));
     m_gsFont.Render();
 
@@ -4229,7 +4298,7 @@ BOOL GS_Snake::ScoresView()
     m_gsFont.SetScaleXY(1.0f, 1.0f);
     m_gsFont.SetText(szTempString);
     m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
-    m_gsFont.SetDestY(((INTERNAL_RES_Y - (m_gsFont.GetTextHeight() * MAX_SCORES)) / 2) + ((MAX_SCORES) * m_gsFont.GetTextHeight()));
+    m_gsFont.SetDestY(((INTERNAL_RES_Y - (m_gsFont.GetTextHeight() * MAX_SCORES)) / 2) + ((MAX_SCORES)*m_gsFont.GetTextHeight()));
     // Render the text.
     m_gsFont.Render();
 
@@ -4249,18 +4318,20 @@ BOOL GS_Snake::ScoresView()
 
         // Pad the mode string
         lstrcpy(szPaddedMode, m_gsHiscores[nLoop].szMode);
-        if(lstrlen(szPaddedMode) < 7) {
-            for( int i = (lstrlen(szPaddedMode)); i < sizeof(szPaddedMode) - 1; i++ ) {
+        if (lstrlen(szPaddedMode) < 7)
+        {
+            for (int i = (lstrlen(szPaddedMode)); i < sizeof(szPaddedMode) - 1; i++)
+            {
                 szPaddedMode[i] = ' ';
             }
             szPaddedMode[sizeof(szPaddedLevel) - 1] = '\0';
         }
 
         // Setup a temporary string with all the relevant hiscore data and assign it.
-        sprintf(szTempString, " %02d %s %s %7s %06ld ",nLoop+1, m_gsHiscores[nLoop].szName, szPaddedMode, szPaddedLevel, m_gsHiscores[nLoop].lScore);
+        sprintf(szTempString, " %02d %s %s %7s %06ld ", nLoop + 1, m_gsHiscores[nLoop].szName, szPaddedMode, szPaddedLevel, m_gsHiscores[nLoop].lScore);
         m_gsFont.SetText(szTempString);
         // Set the position of the next hiscore.
-        m_gsFont.SetDestX((INTERNAL_RES_X   -  m_gsFont.GetTextWidth())  / 2);
+        m_gsFont.SetDestX((INTERNAL_RES_X - m_gsFont.GetTextWidth()) / 2);
         m_gsFont.SetDestY(((INTERNAL_RES_Y - (m_gsFont.GetTextHeight() * MAX_SCORES)) / 2) + ((MAX_SCORES - nLoop - 2) * m_gsFont.GetTextHeight()));
         // Render the text.
         m_gsFont.Render();
@@ -4290,16 +4361,14 @@ BOOL GS_Snake::ScoresView()
         // Remember where we've come from.
         m_nPrevProgress = SCORES_VIEW;
         // Reset method variables.
-        m_nScoreIndex    = 0;
+        m_nScoreIndex = 0;
         m_bIsInitialized = FALSE;
     }
 
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::ScoresAdd():
@@ -4329,18 +4398,18 @@ BOOL GS_Snake::ScoresAdd()
     // Do Method Initialization /////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////
 
-    static int nCharCount  = 0;
+    static int nCharCount = 0;
 
-    static char szTempString[11] = { 0 };
+    static char szTempString[11] = {0};
 
     // Has the method not been initialized?
     if (m_bIsInitialized == FALSE)
     {
         // Initialize variables.
         m_nScoreIndex = 0;
-        nCharCount    = 0;
+        nCharCount = 0;
         // Loop through all the hiscores starting from the lowest.
-        for (int nLoop = MAX_SCORES-1; nLoop >= 0; nLoop--)
+        for (int nLoop = MAX_SCORES - 1; nLoop >= 0; nLoop--)
         {
             // Is the current score is greater than the hiscore?
             if (m_lScore > m_gsHiscores[nLoop].lScore)
@@ -4371,18 +4440,19 @@ BOOL GS_Snake::ScoresAdd()
     {
     // Was the up key pressed?
     case GSK_UP:
+    case GSC_BUTTON_DPAD_UP:
         // Go to the next character.
         szTempString[nCharCount]++;
         // Allow only certain characters.
-        if (szTempString[nCharCount] == GSK_DELETE+1)
+        if (szTempString[nCharCount] == GSK_DELETE + 1)
         {
             szTempString[nCharCount] = GSK_0;
         }
-        else if (szTempString[nCharCount] == GSK_9+1)
+        else if (szTempString[nCharCount] == GSK_9 + 1)
         {
             szTempString[nCharCount] = GSK_A;
         }
-        else if (szTempString[nCharCount] == GSK_Z+1)
+        else if (szTempString[nCharCount] == GSK_Z + 1)
         {
             szTempString[nCharCount] = GSK_DELETE;
         }
@@ -4391,18 +4461,19 @@ BOOL GS_Snake::ScoresAdd()
         break;
     // Was the up key pressed?
     case GSK_DOWN:
+    case GSC_BUTTON_DPAD_DOWN:
         // Go to the previous character.
         szTempString[nCharCount]--;
         // Allow only certain characters.
-        if (szTempString[nCharCount] == GSK_DELETE-1)
+        if (szTempString[nCharCount] == GSK_DELETE - 1)
         {
             szTempString[nCharCount] = GSK_Z;
         }
-        else if (szTempString[nCharCount] == GSK_A-1)
+        else if (szTempString[nCharCount] == GSK_A - 1)
         {
             szTempString[nCharCount] = GSK_9;
         }
-        else if (szTempString[nCharCount] == GSK_0-1)
+        else if (szTempString[nCharCount] == GSK_0 - 1)
         {
             szTempString[nCharCount] = GSK_DELETE;
         }
@@ -4411,6 +4482,7 @@ BOOL GS_Snake::ScoresAdd()
         break;
     // Was the left key pressed?
     case GSK_LEFT:
+    case GSC_BUTTON_DPAD_LEFT:
         // Move one character left.
         nCharCount--;
         // Wrap around edges.
@@ -4423,6 +4495,7 @@ BOOL GS_Snake::ScoresAdd()
         break;
     // Was the right key pressed?
     case GSK_RIGHT:
+    case GSC_BUTTON_DPAD_RIGHT:
         // Move one character right.
         nCharCount++;
         // Wrap around edges.
@@ -4439,9 +4512,9 @@ BOOL GS_Snake::ScoresAdd()
         if (nCharCount > 0)
         {
             // Shift all letters one back starting at active letter.
-            for (int nLoop = nCharCount-1; nLoop < 9; nLoop++)
+            for (int nLoop = nCharCount - 1; nLoop < 9; nLoop++)
             {
-                szTempString[nLoop] = szTempString[nLoop+1];
+                szTempString[nLoop] = szTempString[nLoop + 1];
             }
             // Delete the last letter.
             szTempString[9] = GSK_DELETE;
@@ -4456,7 +4529,7 @@ BOOL GS_Snake::ScoresAdd()
         // Shift all letters one back starting at active letter.
         for (int nLoop = nCharCount; nLoop < 9; nLoop++)
         {
-            szTempString[nLoop] = szTempString[nLoop+1];
+            szTempString[nLoop] = szTempString[nLoop + 1];
         }
         // Delete the last letter.
         szTempString[9] = GSK_DELETE;
@@ -4465,20 +4538,22 @@ BOOL GS_Snake::ScoresAdd()
         break;
     // Was the enter key pressed?
     case GSK_ENTER:
+    case GSC_BUTTON_A:
         // Loop through all the scores lower than the current score.
-        for (int nLoop = MAX_SCORES-1; nLoop > m_nScoreIndex; nLoop--)
+        for (int nLoop = MAX_SCORES - 1; nLoop > m_nScoreIndex; nLoop--)
         {
             // Shift scores to make place for the new score.
-            m_gsHiscores[nLoop] = m_gsHiscores[nLoop-1];
+            m_gsHiscores[nLoop] = m_gsHiscores[nLoop - 1];
         }
         // Save the player name and statistics.
-        if( strcmp(szTempString, "..........") == 0 ) lstrcpy(szTempString, "PLAYER.1..");
+        if (strcmp(szTempString, "..........") == 0)
+            lstrcpy(szTempString, "PLAYER.1..");
         lstrcpy(m_gsHiscores[m_nScoreIndex].szName, szTempString);
         lstrcpy(m_gsHiscores[m_nScoreIndex].szMode, "       ");
         lstrcpy(m_gsHiscores[m_nScoreIndex].szMode, (m_gameMode == EASY_MODE ? "CLASSIC" : "REMIX"));
         lstrcpy(m_gsHiscores[m_nScoreIndex].szLevel, "       ");
         sprintf(m_gsHiscores[m_nScoreIndex].szLevel, "%d-%d", m_currentWorld, m_currentLevel);
-        m_gsHiscores[m_nScoreIndex].lScore  = m_lScore;
+        m_gsHiscores[m_nScoreIndex].lScore = m_lScore;
         // Play the appropriate sound effect.
         m_gsSound.PlaySample(SAMPLE_SELECT);
         // Progress to the next section.
@@ -4486,6 +4561,7 @@ BOOL GS_Snake::ScoresAdd()
         break;
     // Was the escape key pressed?
     case GSK_ESCAPE:
+    case GSC_BUTTON_B:
         // Play the appropriate sound effect.
         m_gsSound.PlaySample(SAMPLE_SELECT);
         // Progress to the next section.
@@ -4518,7 +4594,6 @@ BOOL GS_Snake::ScoresAdd()
         }
         break;
     }
-
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Do Method Logic //////////////////////////////////////////////////////////////////////////
@@ -4597,9 +4672,7 @@ BOOL GS_Snake::ScoresAdd()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::ScoresOutro():
@@ -4693,14 +4766,11 @@ BOOL GS_Snake::ScoresOutro()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Load & Save Methods *********************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::LoadSettings():
@@ -4713,7 +4783,7 @@ BOOL GS_Snake::ScoresOutro()
 BOOL GS_Snake::LoadSettings()
 {
 
-    char szTempString[_MAX_PATH] = { 0 };
+    char szTempString[_MAX_PATH] = {0};
     GS_IniFile gsIniFile;
 
     // Determine the full pathname of the INI file.
@@ -4729,13 +4799,13 @@ BOOL GS_Snake::LoadSettings()
     }
 
     // Read all the display settings.
-    m_gsSettings.nDisplayWidth   = gsIniFile.ReadInt("Display", "DisplayWidth",   -1);
-    m_gsSettings.nDisplayHeight  = gsIniFile.ReadInt("Display", "DisplayHeight",  -1);
-    m_gsSettings.nColorDepth     = gsIniFile.ReadInt("Display", "ColorDepth",     -1);
-    m_gsSettings.bWindowedMode   = gsIniFile.ReadInt("Display", "WindowMode",     -1);
-    m_gsSettings.bEnableVSync    = gsIniFile.ReadInt("Display", "EnableVSync",    -1);
+    m_gsSettings.nDisplayWidth = gsIniFile.ReadInt("Display", "DisplayWidth", -1);
+    m_gsSettings.nDisplayHeight = gsIniFile.ReadInt("Display", "DisplayHeight", -1);
+    m_gsSettings.nColorDepth = gsIniFile.ReadInt("Display", "ColorDepth", -1);
+    m_gsSettings.bWindowedMode = gsIniFile.ReadInt("Display", "WindowMode", -1);
+    m_gsSettings.bEnableVSync = gsIniFile.ReadInt("Display", "EnableVSync", -1);
     m_gsSettings.bEnableAliasing = gsIniFile.ReadInt("Display", "EnableAliasing", -1);
-    m_gsSettings.fFrameCap       = gsIniFile.ReadInt("Display", "FrameCap",       -1);
+    m_gsSettings.fFrameCap = gsIniFile.ReadInt("Display", "FrameCap", -1);
 
     // Did reading display settings fail?
     if (-1 == m_gsSettings.nDisplayWidth)
@@ -4768,7 +4838,7 @@ BOOL GS_Snake::LoadSettings()
     }
 
     // Read all the sound settings.
-    m_gsSettings.nMusicVolume   = gsIniFile.ReadInt("Sound", "MusicVolume",   -1);
+    m_gsSettings.nMusicVolume = gsIniFile.ReadInt("Sound", "MusicVolume", -1);
     m_gsSettings.nEffectsVolume = gsIniFile.ReadInt("Sound", "EffectsVolume", -1);
 
     // Did reading sound settings fail?
@@ -4787,9 +4857,7 @@ BOOL GS_Snake::LoadSettings()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::SaveSettings():
@@ -4802,7 +4870,7 @@ BOOL GS_Snake::LoadSettings()
 BOOL GS_Snake::SaveSettings()
 {
 
-    char szTempString[_MAX_PATH] = { 0 };
+    char szTempString[_MAX_PATH] = {0};
     GS_IniFile gsIniFile;
 
     // Determine the full pathname of the INI file.
@@ -4818,16 +4886,16 @@ BOOL GS_Snake::SaveSettings()
     }
 
     // Write display settings.
-    gsIniFile.WriteInt("Display", "DisplayWidth",   m_gsSettings.nDisplayWidth);
-    gsIniFile.WriteInt("Display", "DisplayHeight",  m_gsSettings.nDisplayHeight);
-    gsIniFile.WriteInt("Display", "ColorDepth",     m_gsSettings.nColorDepth);
-    gsIniFile.WriteInt("Display", "WindowMode",     m_gsSettings.bWindowedMode);
-    gsIniFile.WriteInt("Display", "EnableVSync",    m_gsSettings.bEnableVSync);
+    gsIniFile.WriteInt("Display", "DisplayWidth", m_gsSettings.nDisplayWidth);
+    gsIniFile.WriteInt("Display", "DisplayHeight", m_gsSettings.nDisplayHeight);
+    gsIniFile.WriteInt("Display", "ColorDepth", m_gsSettings.nColorDepth);
+    gsIniFile.WriteInt("Display", "WindowMode", m_gsSettings.bWindowedMode);
+    gsIniFile.WriteInt("Display", "EnableVSync", m_gsSettings.bEnableVSync);
     gsIniFile.WriteInt("Display", "EnableAliasing", m_gsSettings.bEnableAliasing);
-    gsIniFile.WriteInt("Display", "FrameCap",       m_gsSettings.fFrameCap);
+    gsIniFile.WriteInt("Display", "FrameCap", m_gsSettings.fFrameCap);
 
     // Write sound settings.
-    gsIniFile.WriteInt("Sound", "MusicVolume",   m_gsSettings.nMusicVolume);
+    gsIniFile.WriteInt("Sound", "MusicVolume", m_gsSettings.nMusicVolume);
     gsIniFile.WriteInt("Sound", "EffectsVolume", m_gsSettings.nEffectsVolume);
 
     // Close the INI file.
@@ -4836,9 +4904,7 @@ BOOL GS_Snake::SaveSettings()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::LoadHiscores():
@@ -4851,7 +4917,7 @@ BOOL GS_Snake::SaveSettings()
 BOOL GS_Snake::LoadHiscores()
 {
 
-    char szTempString[_MAX_PATH] = { 0 };
+    char szTempString[_MAX_PATH] = {0};
     GS_IniFile gsIniFile;
 
     // Determine the full pathname of the INI file.
@@ -4878,9 +4944,8 @@ BOOL GS_Snake::LoadHiscores()
         // Load the player level from the hiscores file.
         lstrcpy(m_gsHiscores[nLoop].szLevel, gsIniFile.ReadString(szTempString, "Level", "0-0"));
         // Load the player score from the hiscores file.
-        m_gsHiscores[nLoop].lScore = (long) gsIniFile.ReadFloat(szTempString, "Score", 0);
+        m_gsHiscores[nLoop].lScore = (long)gsIniFile.ReadFloat(szTempString, "Score", 0);
     }
-
 
     // Close the INI file.
     gsIniFile.Close();
@@ -4888,9 +4953,7 @@ BOOL GS_Snake::LoadHiscores()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::SaveHiscores():
@@ -4903,7 +4966,7 @@ BOOL GS_Snake::LoadHiscores()
 BOOL GS_Snake::SaveHiscores()
 {
 
-    char szTempString[_MAX_PATH] = { 0 };
+    char szTempString[_MAX_PATH] = {0};
     GS_IniFile gsIniFile;
 
     // Determine the full pathname of the INI file.
@@ -4924,10 +4987,10 @@ BOOL GS_Snake::SaveHiscores()
         // Save the score heading.
         sprintf(szTempString, "Score%d", nLoop);
         // Save the player name and score to the hiscores file.
-        gsIniFile.WriteString(szTempString, "Name",  m_gsHiscores[nLoop].szName);
+        gsIniFile.WriteString(szTempString, "Name", m_gsHiscores[nLoop].szName);
         gsIniFile.WriteString(szTempString, "Mode", m_gsHiscores[nLoop].szMode);
         gsIniFile.WriteString(szTempString, "Level", m_gsHiscores[nLoop].szLevel);
-        gsIniFile.WriteFloat(szTempString,  "Score", (float) m_gsHiscores[nLoop].lScore);
+        gsIniFile.WriteFloat(szTempString, "Score", (float)m_gsHiscores[nLoop].lScore);
     }
 
     // Close the INI file.
@@ -4936,14 +4999,11 @@ BOOL GS_Snake::SaveHiscores()
     return TRUE;
 }
 
-
 // *********************************************************************************************
-
 
 // *********************************************************************************************
 // *** Helper Methods **************************************************************************
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::RenderBackground():
@@ -4959,7 +5019,7 @@ void GS_Snake::RenderBackground(float fAlpha)
     m_gsBackSprite.SetModulateColor(-1.0f, -1.0f, -1.0f, fAlpha);
 
     // Postion the background centered in the screen.
-    m_gsBackSprite.SetDestXY((INTERNAL_RES_X -  m_gsBackSprite.GetScaledWidth()) / 2,
+    m_gsBackSprite.SetDestXY((INTERNAL_RES_X - m_gsBackSprite.GetScaledWidth()) / 2,
                              (INTERNAL_RES_Y - m_gsBackSprite.GetScaledHeight()) / 2);
 
     // Display the background image.
@@ -4973,9 +5033,7 @@ void GS_Snake::RenderBackground(float fAlpha)
     }
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::RenderScore():
@@ -4987,7 +5045,7 @@ void GS_Snake::RenderBackground(float fAlpha)
 
 void GS_Snake::RenderScore(float fAlpha)
 {
-        // Set the alpha value to determine the transparency of the background.
+    // Set the alpha value to determine the transparency of the background.
     m_gsBackSprite.SetModulateColor(-1.0f, -1.0f, -1.0f, fAlpha);
 
     m_gsBackSprite.SetSourceRect(0, INTERNAL_RES_Y + SCORE_AREA_HEIGHT, INTERNAL_RES_X, INTERNAL_RES_Y);
@@ -5014,7 +5072,7 @@ void GS_Snake::RenderScore(float fAlpha)
     m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, fAlpha);
     m_gsFont.SetScaleXY(1.0f, 1.0f);
     m_gsFont.SetDestX(((INTERNAL_RES_X / 4) - m_gsFont.GetTextWidth()) / 2); // - (INTERNAL_RES_X / 4 * 3));
-    m_gsFont.SetDestY(INTERNAL_RES_Y - SCORE_AREA_HEIGHT + ((SCORE_AREA_HEIGHT - m_gsFont.GetTextHeight()) / 2) );
+    m_gsFont.SetDestY(INTERNAL_RES_Y - SCORE_AREA_HEIGHT + ((SCORE_AREA_HEIGHT - m_gsFont.GetTextHeight()) / 2));
     m_gsFont.Render();
 
     // Display rats for next leavel
@@ -5022,7 +5080,7 @@ void GS_Snake::RenderScore(float fAlpha)
     m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, fAlpha);
     m_gsFont.SetScaleXY(1.0f, 1.0f);
     m_gsFont.SetDestX((((INTERNAL_RES_X / 4) - m_gsFont.GetTextWidth()) / 2) + (INTERNAL_RES_X / 4 * 1));
-    m_gsFont.SetDestY(INTERNAL_RES_Y - SCORE_AREA_HEIGHT + ((SCORE_AREA_HEIGHT - m_gsFont.GetTextHeight()) / 2) );
+    m_gsFont.SetDestY(INTERNAL_RES_Y - SCORE_AREA_HEIGHT + ((SCORE_AREA_HEIGHT - m_gsFont.GetTextHeight()) / 2));
     m_gsFont.Render();
 
     // Display the player lives
@@ -5030,7 +5088,7 @@ void GS_Snake::RenderScore(float fAlpha)
     m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, fAlpha);
     m_gsFont.SetScaleXY(1.0f, 1.0f);
     m_gsFont.SetDestX((((INTERNAL_RES_X / 4) - m_gsFont.GetTextWidth()) / 2) + (INTERNAL_RES_X / 4 * 2));
-    m_gsFont.SetDestY(INTERNAL_RES_Y - SCORE_AREA_HEIGHT + ((SCORE_AREA_HEIGHT - m_gsFont.GetTextHeight()) / 2) );
+    m_gsFont.SetDestY(INTERNAL_RES_Y - SCORE_AREA_HEIGHT + ((SCORE_AREA_HEIGHT - m_gsFont.GetTextHeight()) / 2));
     m_gsFont.Render();
 
     // Display the player score
@@ -5038,7 +5096,7 @@ void GS_Snake::RenderScore(float fAlpha)
     m_gsFont.SetModulateColor(1.0f, 1.0f, 1.0f, fAlpha);
     m_gsFont.SetScaleXY(1.0f, 1.0f);
     m_gsFont.SetDestX((((INTERNAL_RES_X / 4) - m_gsFont.GetTextWidth()) / 2) + (INTERNAL_RES_X / 4 * 3));
-    m_gsFont.SetDestY(INTERNAL_RES_Y - SCORE_AREA_HEIGHT + ((SCORE_AREA_HEIGHT - m_gsFont.GetTextHeight()) / 2) );
+    m_gsFont.SetDestY(INTERNAL_RES_Y - SCORE_AREA_HEIGHT + ((SCORE_AREA_HEIGHT - m_gsFont.GetTextHeight()) / 2));
     m_gsFont.Render();
 
     // Reset the font modulate color
@@ -5055,7 +5113,7 @@ void GS_Snake::RenderScore(float fAlpha)
     long lDestX = 0;
     long lDestY = PLAY_AREA_HEIGHT + 1;
 
-    float fWidth  = nCols * m_gsScoreBackground.GetFrameWidth();
+    float fWidth = nCols * m_gsScoreBackground.GetFrameWidth();
     float fHeight = nRows * m_gsScoreBackground.GetFrameHeight();
 
     float fTileWidth = m_gsScoreBackground.GetFrameWidth();
@@ -5113,16 +5171,15 @@ void GS_Snake::RenderScore(float fAlpha)
         // Render left border or seperator.
         m_gsScoreBackground.SetFrame(0);
         m_gsScoreBackground.SetDestX(lDestX);
-        m_gsScoreBackground.SetDestY(lDestY + fHeight - ((yLoop+1) * fTileHeight));
+        m_gsScoreBackground.SetDestY(lDestY + fHeight - ((yLoop + 1) * fTileHeight));
         m_gsScoreBackground.Render();
 
         // Render right border or seperator.
         m_gsScoreBackground.SetFrame(1);
         m_gsScoreBackground.SetDestX(lDestX + fWidth - fTileWidth);
-        m_gsScoreBackground.SetDestY(lDestY + fHeight - ((yLoop+1) * fTileHeight));
+        m_gsScoreBackground.SetDestY(lDestY + fHeight - ((yLoop + 1) * fTileHeight));
         m_gsScoreBackground.Render();
     }
-
 
     // Render the score area background
     for (xLoop = 1; xLoop < (nCols - 1); xLoop++)
@@ -5132,7 +5189,7 @@ void GS_Snake::RenderScore(float fAlpha)
             // Render background
             m_gsScoreBackground.SetFrame(11);
             m_gsScoreBackground.SetDestX(lDestX + (xLoop * fTileWidth));
-            m_gsScoreBackground.SetDestY(lDestY + fHeight - ((yLoop+1) * fTileHeight));
+            m_gsScoreBackground.SetDestY(lDestY + fHeight - ((yLoop + 1) * fTileHeight));
             m_gsScoreBackground.Render();
         }
     }
@@ -5145,9 +5202,7 @@ void GS_Snake::RenderScore(float fAlpha)
     }
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::RenderCursor():
@@ -5178,9 +5233,7 @@ void GS_Snake::RenderCursor(float fAlpha)
     }
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::RenderFrameRate():
@@ -5215,9 +5268,7 @@ void GS_Snake::RenderFrameRate(float fAlpha)
     }
 }
 
-
 // *********************************************************************************************
-
 
 //==============================================================================================
 // GS_Snake::SetRenderScaling():
@@ -5230,7 +5281,7 @@ void GS_Snake::RenderFrameRate(float fAlpha)
 void GS_Snake::SetRenderScaling(int nWidth, int nHeight, bool bKeepAspect)
 {
     // Is no scaling required?
-    if( (nWidth == INTERNAL_RES_X) && (nHeight == INTERNAL_RES_Y) )
+    if ((nWidth == INTERNAL_RES_X) && (nHeight == INTERNAL_RES_Y))
     {
         // Reset the default scaling values
         GS_OGLDisplay::SetScaleFactorX(1.0f);
@@ -5246,29 +5297,29 @@ void GS_Snake::SetRenderScaling(int nWidth, int nHeight, bool bKeepAspect)
     float aspect = (float)INTERNAL_RES_X / (float)INTERNAL_RES_Y;
 
     // Set up default values for upscaling or downscaling
-    float fAspectWidth  = (float)nWidth;
+    float fAspectWidth = (float)nWidth;
     float fAspectHeight = (float)nHeight;
     float fRenderModX = 0;
     float fRenderModY = 0;
 
     // Should we keep the aspect ratio?
-    if( bKeepAspect )
+    if (bKeepAspect)
     {
         // Is the horizontal dimension greater than the vertical?
-        if( INTERNAL_RES_X >= INTERNAL_RES_Y )
+        if (INTERNAL_RES_X >= INTERNAL_RES_Y)
         {
             // Try to scale the rendering to the given width
-            fAspectWidth  = (float)nWidth;
+            fAspectWidth = (float)nWidth;
             fAspectHeight = (float)fAspectWidth / aspect;
             fRenderModX = 0;
             fRenderModY = (nHeight - fAspectHeight) / 2.0f;
 
             // Have we scaled beyond the given height
-            if( fAspectHeight > (float)nHeight )
+            if (fAspectHeight > (float)nHeight)
             {
                 // Scale the rendering to the given height
                 fAspectHeight = (float)nHeight;
-                fAspectWidth  = fAspectHeight * aspect;
+                fAspectWidth = fAspectHeight * aspect;
                 fRenderModX = (nWidth - fAspectWidth) / 2.0f;
                 fRenderModY = 0;
             }
@@ -5277,15 +5328,15 @@ void GS_Snake::SetRenderScaling(int nWidth, int nHeight, bool bKeepAspect)
         {
             // Try to scale the rendering to the given height
             fAspectHeight = (float)nHeight;
-            fAspectWidth  = fAspectHeight * aspect;
+            fAspectWidth = fAspectHeight * aspect;
             fRenderModX = (nWidth - fAspectWidth) / 2.0f;
             fRenderModY = 0;
 
             // Have we scaled beyond the given width
-            if( fAspectWidth > (float)nWidth )
+            if (fAspectWidth > (float)nWidth)
             {
                 // Scale the rendering to the given width
-                fAspectWidth  = (float)nWidth;
+                fAspectWidth = (float)nWidth;
                 fAspectHeight = (float)fAspectWidth / aspect;
                 fRenderModX = 0;
                 fRenderModY = (nHeight - fAspectHeight) / 2.0f;
@@ -5298,10 +5349,9 @@ void GS_Snake::SetRenderScaling(int nWidth, int nHeight, bool bKeepAspect)
     GS_OGLDisplay::SetRenderModY(int(fRenderModY));
 
     // Set the scale factor to effect upscaling or downscaling depending on the resolution
-    GS_OGLDisplay::SetScaleFactorX((float)fAspectWidth  / (float)INTERNAL_RES_X);
+    GS_OGLDisplay::SetScaleFactorX((float)fAspectWidth / (float)INTERNAL_RES_X);
     GS_OGLDisplay::SetScaleFactorY((float)fAspectHeight / (float)INTERNAL_RES_Y);
 }
-
 
 //==============================================================================================
 // GS_Snake::GetActionInterval():
@@ -5320,7 +5370,6 @@ float GS_Snake::GetActionInterval(float fActionsPerSecond)
     // one second (at the current frame rate).
     return ((this->GetFrameTime() / 1000) * fActionsPerSecond);
 }
-
 
 // *********************************************************************************************
 

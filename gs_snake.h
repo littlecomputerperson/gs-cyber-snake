@@ -10,10 +10,8 @@
  |                                                                                    03/2024 |
  +============================================================================================*/
 
-
 #ifndef GS_SNAKE_H
 #define GS_SNAKE_H
-
 
 //================================================================================================
 // Include Game System (GS) header files.
@@ -28,6 +26,7 @@
 #include "gs_ogl_menu.h"
 #include "gs_ogl_sprite_ex.h"
 #include "gs_ogl_particle.h"
+#include "gs_sdl_controller.h"
 
 #ifdef GS_USE_SDL_MIXER
 #include "gs_sdl_mixer_sound.h"
@@ -53,96 +52,94 @@
 #include <time.h>
 //================================================================================================
 
-
 //==============================================================================================
 // Game defines.
 // ---------------------------------------------------------------------------------------------
-#define GAME_VERSION  "1.0.1"
+#define GAME_VERSION "1.0.1"
 #define SETTINGS_FILE "settings.ini"
 #define HISCORES_FILE "hiscores.ini"
 // ---------------------------------------------------------------------------------------------
 #define INTERNAL_RES_X 960
 #define INTERNAL_RES_Y 540
-#define PLAY_AREA_WIDTH  960
+#define PLAY_AREA_WIDTH 960
 #define PLAY_AREA_HEIGHT 480
 #define PLAY_AREA_ROWS 30
 #define PLAY_AREA_COLS 60
-#define SCORE_AREA_WIDTH  960
+#define SCORE_AREA_WIDTH 960
 #define SCORE_AREA_HEIGHT 60
 // ---------------------------------------------------------------------------------------------
-#define DEFAULT_WIDTH       960
-#define DEFAULT_HEIGHT      540
-#define DEFAULT_DEPTH       32
-#define DEFAULT_MODE        1
-#define DEFAULT_VSYNC       0
-#define DEFAULT_ALIAS       0
-#define DEFAULT_FRAMECAP    60.0f
-#define DEFAULT_LIMIT       1
-#define DEFAULT_MUSIC       255
-#define DEFAULT_SOUND       255
+#define DEFAULT_WIDTH 960
+#define DEFAULT_HEIGHT 540
+#define DEFAULT_DEPTH 32
+#define DEFAULT_MODE 1
+#define DEFAULT_VSYNC 0
+#define DEFAULT_ALIAS 0
+#define DEFAULT_FRAMECAP 60.0f
+#define DEFAULT_LIMIT 1
+#define DEFAULT_MUSIC 255
+#define DEFAULT_SOUND 255
 // ---------------------------------------------------------------------------------------------
-#define GAME_INTRO    0
-#define GAME_OUTRO    1
-#define TITLE_INTRO   2
-#define TITLE_SCREEN  3
-#define TITLE_OUTRO   4
-#define OPTION_INTRO  5
+#define GAME_INTRO 0
+#define GAME_OUTRO 1
+#define TITLE_INTRO 2
+#define TITLE_SCREEN 3
+#define TITLE_OUTRO 4
+#define OPTION_INTRO 5
 #define OPTION_SCREEN 6
-#define OPTION_OUTRO  7
-#define PLAY_INTRO    8
-#define PLAY_GAME     9
-#define PLAY_UPDATE   10
-#define PLAY_PAUSE    11
-#define PLAY_EXIT     12
-#define PLAY_OUTRO    13
-#define SCORES_INTRO  14
-#define SCORES_VIEW   15
-#define SCORES_ADD    16
-#define SCORES_OUTRO  17
+#define OPTION_OUTRO 7
+#define PLAY_INTRO 8
+#define PLAY_GAME 9
+#define PLAY_UPDATE 10
+#define PLAY_PAUSE 11
+#define PLAY_EXIT 12
+#define PLAY_OUTRO 13
+#define SCORES_INTRO 14
+#define SCORES_VIEW 15
+#define SCORES_ADD 16
+#define SCORES_OUTRO 17
 // ---------------------------------------------------------------------------------------------
-#define MAX_PARTICLE_SNAKES       20
-#define MAX_PARTICLE_SNAKE_SPEED  6
-#define MIN_PARTICLE_SNAKE_SPEED  2
+#define MAX_PARTICLE_SNAKES 20
+#define MAX_PARTICLE_SNAKE_SPEED 6
+#define MIN_PARTICLE_SNAKE_SPEED 2
 #define MAX_PARTICLE_SNAKE_LENGTH 15
 #define MIN_PARTICLE_SNAKE_LENGTH 5
 // ---------------------------------------------------------------------------------------------
 #define MAX_SCORES 10
 // ---------------------------------------------------------------------------------------------
 #define MUSIC_TITLE 0
-#define MUSIC_GAME  1
+#define MUSIC_GAME 1
 // ---------------------------------------------------------------------------------------------
-#define SAMPLE_OPTION        0
-#define SAMPLE_SELECT        1
-#define SAMPLE_SNAKE_INPUT   2
+#define SAMPLE_OPTION 0
+#define SAMPLE_SELECT 1
+#define SAMPLE_SNAKE_INPUT 2
 #define SAMPLE_SNAKE_GROWING 3
-#define SAMPLE_SNAKE_DYING   4
-#define SAMPLE_RAT_MOVING    5
-#define SAMPLE_RAT_DYING     6
+#define SAMPLE_SNAKE_DYING 4
+#define SAMPLE_RAT_MOVING 5
+#define SAMPLE_RAT_DYING 6
 // ---------------------------------------------------------------------------------------------
-#define RATS_PER_LEVEL  10
+#define RATS_PER_LEVEL 10
 #define RATE_BASE_SCORE 10
-#define DEFAULT_LIVES   5
+#define DEFAULT_LIVES 5
 // ---------------------------------------------------------------------------------------------
-#define EASY_MODE   1
+#define EASY_MODE 1
 #define NORMAL_MODE 2
-#define HARD_MODE   3
+#define HARD_MODE 3
 //==============================================================================================
-
 
 //==============================================================================================
 // Game structures.
 // ---------------------------------------------------------------------------------------------
 typedef struct GS_SETTINGS
 {
-    int  nDisplayWidth;   // The width (in pixels) of the display area.
-    int  nDisplayHeight;  // The height (in pixels) of the display area.
-    int  nColorDepth;     // The color depth of the display (8, 16, 24 or 32).
+    int nDisplayWidth;    // The width (in pixels) of the display area.
+    int nDisplayHeight;   // The height (in pixels) of the display area.
+    int nColorDepth;      // The color depth of the display (8, 16, 24 or 32).
     BOOL bWindowedMode;   // Whether game is in fullscreen or windowed mode.
     BOOL bEnableVSync;    // Whether to syncronize rendering with refresh rate.
     BOOL bEnableAliasing; // Whether to enable anti-aliasing or not.
     float fFrameCap;      // Set the framerate cap (0.0f for uncapped)
-    int  nMusicVolume;    // The volume of the music (0-255).
-    int  nEffectsVolume;  // The volume of the sound effects (0-255).
+    int nMusicVolume;     // The volume of the music (0-255).
+    int nEffectsVolume;   // The volume of the sound effects (0-255).
 } GS_Settings;
 // ---------------------------------------------------------------------------------------------
 typedef struct GS_HISCORES
@@ -170,54 +167,54 @@ typedef struct PARTICLE_SNAKE
 // Class Definition. ///////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 class GS_Snake : public GS_Application
 {
 
 private:
-
     GS_Settings m_gsSettings; // Option settings.
 
-    GS_Keyboard m_gsKeyboard;  // Keyboard object.
-    GS_Mouse    m_gsMouse;     // Mouse object.
+    GS_Keyboard m_gsKeyboard;     // Keyboard object.
+    GS_Mouse m_gsMouse;           // Mouse object.
+    GS_Controller m_gsController; // Controller object.
 
     GS_OGLDisplay m_gsDisplay; // OpenGL display object.
 
-    #ifdef GS_USE_SDL_MIXER
-        GS_SDLMixerSound m_gsSound;
-    #else
-        GS_FmodSound m_gsSound;
-    #endif
+#ifdef GS_USE_SDL_MIXER
+    GS_SDLMixerSound m_gsSound;
+#else
+    GS_FmodSound m_gsSound;
+#endif
 
     GS_Timer m_gsTimer; // Timer object.
 
     GS_OGLSprite m_gsBackSprite;   // Sprite used for the game background.
     GS_OGLSprite m_gsCursorSprite; // Sprite used for the mouse cursor.
     // GS_OGLSprite m_gsTileSprite;   // Sprite used for tile background.
-    GS_OGLSprite m_gsTitleSprite;  // Sprite used for the title.
+    GS_OGLSprite m_gsTitleSprite; // Sprite used for the title.
 
-    GS_OGLTexture  m_gsFontTexture; // Texture used to create the font end menu.
-    GS_OGLFont     m_gsFont; // Game font.
-    GS_OGLMenu     m_gsMenu; // Game menu.
+    GS_OGLTexture m_gsFontTexture; // Texture used to create the font end menu.
+    GS_OGLFont m_gsFont;           // Game font.
+    GS_OGLMenu m_gsMenu;           // Game menu.
 
     GS_OGLCollide m_gsCollide; // Object for collision detection.
 
-    RECT m_rcScreen; // Screen coordinates for rendering tiles.
-    RECT m_rcPlayArea; // Coordinates for the play area
-    RECT m_rcScoreArea; // Coordinates for the score area
+    RECT m_rcScreen;         // Screen coordinates for rendering tiles.
+    RECT m_rcPlayArea;       // Coordinates for the play area
+    RECT m_rcScoreArea;      // Coordinates for the score area
     bool m_bKeepAspectRatio; // Whether to keep the aspect ratio for up/down scaling
 
     int m_nGameProgress; // Keeps track of the game progress.
     int m_nPrevProgress; // Previous stage.
     int m_nNextProgress; // Next stage.
 
-    BOOL m_bIsInitialized;    // Has a method been initialized?
-    BOOL m_bWasKeyReleased;   // Whether a key has been released.
-    BOOL m_bWasMouseReleased; // Whether the left mouse button was released.
-    int  m_nOldMouseX;        // Previous mouse x coordinate.
-    int  m_nOldMouseY;        // Previous mouse y coordinate.
-    int  m_nOptionSelected;   // Which menu option was selected.
-    int  m_nCounter;          // Used for counting throughout the game.
+    BOOL m_bIsInitialized;     // Has a method been initialized?
+    BOOL m_bWasKeyReleased;    // Whether a key has been released.
+    BOOL m_bWasButtonReleased; // Whether a controller button has been released.
+    BOOL m_bWasMouseReleased;  // Whether the left mouse button was released.
+    int m_nOldMouseX;          // Previous mouse x coordinate.
+    int m_nOldMouseY;          // Previous mouse y coordinate.
+    int m_nOptionSelected;     // Which menu option was selected.
+    int m_nCounter;            // Used for counting throughout the game.
 
     float m_fInterval; // Used for game timing.
     float m_fRotate;   // Used for rotation effects.
@@ -246,11 +243,10 @@ private:
 
     GS_Hiscores m_gsHiscores[MAX_SCORES]; // Hiscores.
 
-    long m_lScore;      // Keeps track of the game score.
-    int  m_nScoreIndex; // Keeps track of the last score.
+    long m_lScore;     // Keeps track of the game score.
+    int m_nScoreIndex; // Keeps track of the last score.
 
 protected:
-
     // Methods that override base class methods.
     BOOL GameInit();
     BOOL GameShutdown();
@@ -260,7 +256,6 @@ protected:
     void OnChangeMode();
 
 public:
-
     // The constuctor & destructor.
     GS_Snake();
     ~GS_Snake();
@@ -311,6 +306,5 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 #endif
