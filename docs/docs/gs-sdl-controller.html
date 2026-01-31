@@ -46,6 +46,12 @@
                 <li><a href="#onaxismotion">OnAxisMotion() <span class="endpoint-desc">- Handle analog stick/trigger movement</span></a></li>
             </ul>
 
+            <h3>Manual Button State Methods</h3>
+            <ul>
+                <li><a href="#setbuttondown">SetButtonDown() <span class="endpoint-desc">- Manually set button pressed state</span></a></li>
+                <li><a href="#setbuttonup">SetButtonUp() <span class="endpoint-desc">- Manually set button released state</span></a></li>
+            </ul>
+
             <h3>Button State Methods</h3>
             <ul>
                 <li><a href="#isbuttondown">IsButtonDown() <span class="endpoint-desc">- Check if button is pressed</span></a></li>
@@ -718,6 +724,113 @@ printf("Player 1 using controller %d\n", activeController);</pre>
         </div>
     </section>
 
+    <!-- Manual Button State Methods -->
+    <section class="api-section">
+        <h2>Manual Button State Methods</h2>
+        <p>These methods allow manual control of button states, useful when integrating controller input with other input systems or handling events through non-SDL event loops.</p>
+
+        <div class="endpoint" id="setbuttondown">
+            <h3>SetButtonDown()</h3>
+            <p><strong>File:</strong> <code>gs_sdl_controller.cpp</code></p>
+            <p>Manually sets a button state to pressed. This is useful when receiving controller button events through the Windows message system or integrating with custom event handling.</p>
+            
+            <p><strong>Signature:</strong></p>
+            <pre>void SetButtonDown(int nButton, int nControllerIndex = -1)</pre>
+
+            <p><strong>Parameters:</strong></p>
+            <ul>
+                <li><code>nButton</code> - Button code (GSC_BUTTON_* constant)</li>
+                <li><code>nControllerIndex</code> - Controller index, or -1 for active controller (default: -1)</li>
+            </ul>
+
+            <p><strong>Behavior:</strong></p>
+            <ul>
+                <li>Converts button code to internal array index</li>
+                <li>Updates button state to pressed (TRUE)</li>
+                <li>Does nothing if button code, controller index, or connection is invalid</li>
+                <li>Does NOT add button to buffered input queue (unlike OnButtonDown)</li>
+            </ul>
+
+            <p><strong>Use Cases:</strong></p>
+            <ul>
+                <li>Integrating controller input with keyboard input systems</li>
+                <li>Handling WM_KEYDOWN messages that represent controller buttons</li>
+                <li>Custom event processing outside SDL's event loop</li>
+                <li>Testing or simulating controller input</li>
+            </ul>
+
+            <p><strong>Example:</strong></p>
+            <pre style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #007acc; overflow-x: auto;"><code>// In MsgProc - handling controller buttons as keyboard events
+LRESULT GS_Demo::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    switch (uMsg)
+    {
+    case WM_KEYDOWN:
+        // Handle keyboard
+        m_gsKeyboard.KeyDown(wParam);
+        m_gsKeyboard.AddKeyToBuffer(wParam);
+        
+        // Also update controller state if it's a controller button
+        if (wParam >= GSC_BUTTON_A && wParam <= GSC_BUTTON_DPAD_RIGHT)
+        {
+            m_gsController.SetButtonDown(wParam);
+            m_gsController.AddButtonToBuffer(wParam);
+        }
+        break;
+    }
+    
+    return GS_Application::MsgProc(hWnd, uMsg, wParam, lParam);
+}</code></pre>
+
+            <p><strong>Note:</strong> This method only updates the button state array. If you also need buffered input, you must call <code>AddButtonToBuffer()</code> separately. The SDL event handler <code>OnButtonDown()</code> calls both automatically.</p>
+        </div>
+
+        <div class="endpoint" id="setbuttonup">
+            <h3>SetButtonUp()</h3>
+            <p><strong>File:</strong> <code>gs_sdl_controller.cpp</code></p>
+            <p>Manually sets a button state to released. This is the complement to <code>SetButtonDown()</code>.</p>
+            
+            <p><strong>Signature:</strong></p>
+            <pre>void SetButtonUp(int nButton, int nControllerIndex = -1)</pre>
+
+            <p><strong>Parameters:</strong></p>
+            <ul>
+                <li><code>nButton</code> - Button code (GSC_BUTTON_* constant)</li>
+                <li><code>nControllerIndex</code> - Controller index, or -1 for active controller (default: -1)</li>
+            </ul>
+
+            <p><strong>Behavior:</strong></p>
+            <ul>
+                <li>Converts button code to internal array index</li>
+                <li>Updates button state to released (FALSE)</li>
+                <li>Does nothing if button code, controller index, or connection is invalid</li>
+            </ul>
+
+            <p><strong>Use Cases:</strong></p>
+            <ul>
+                <li>Handling WM_KEYUP messages that represent controller buttons</li>
+                <li>Ensuring button states are properly released</li>
+                <li>Custom event processing outside SDL's event loop</li>
+                <li>Testing or simulating controller input</li>
+            </ul>
+
+            <p><strong>Example:</strong></p>
+            <pre style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #007acc; overflow-x: auto;"><code>// In MsgProc - handling controller button releases
+case WM_KEYUP:
+    // Handle keyboard
+    m_gsKeyboard.KeyUp(wParam);
+    
+    // Also update controller state if it's a controller button
+    if (wParam >= GSC_BUTTON_A && wParam <= GSC_BUTTON_DPAD_RIGHT)
+    {
+        m_gsController.SetButtonUp(wParam);
+    }
+    break;</code></pre>
+
+            <p><strong>Note:</strong> This method is automatically called by <code>OnButtonUp()</code> in the SDL event loop. Manual calls are only needed for custom event handling.</p>
+        </div>
+    </section>
+
     <!-- Button State Methods -->
     <section class="api-section">
         <h2>Button State Methods</h2>
@@ -1218,7 +1331,6 @@ if (leftTrigger > 0.1f)
             <h3>Menu Navigation</h3>
             <pre style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #007acc; overflow-x: auto;"><code>// Use buffered input for menus
 int button = m_gsController.GetBufferedButton();
-
 switch (button)
 {
 case GSC_BUTTON_DPAD_UP:
@@ -1377,10 +1489,23 @@ LRESULT GS_Snake::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         // wParam contains either GSK_* (keyboard) or GSC_BUTTON_* (controller)
         m_gsKeyboard.KeyDown(wParam);
         m_gsKeyboard.AddKeyToBuffer(wParam);
+        
+        // Update controller button state if it's a controller button
+        if (wParam >= GSC_BUTTON_A && wParam <= GSC_BUTTON_DPAD_RIGHT)
+        {
+            m_gsController.SetButtonDown(wParam);
+            m_gsController.AddButtonToBuffer(wParam);
+        }
         break;
 
     case WM_KEYUP:
         m_gsKeyboard.KeyUp(wParam);
+        
+        // Update controller button state if it's a controller button
+        if (wParam >= GSC_BUTTON_A && wParam <= GSC_BUTTON_DPAD_RIGHT)
+        {
+            m_gsController.SetButtonUp(wParam);
+        }
         break;
     }
     

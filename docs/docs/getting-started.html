@@ -849,7 +849,7 @@ BOOL GS_Demo::BossFight()
     }
 
     // Render everything
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.2f, 0.4f, 0.8f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     
@@ -1121,28 +1121,67 @@ switch (nKey)
     case GSC_BUTTON_B:
         menu.GoBack();
         break;
-}</code></pre>
+}
 
-            <h3>Best Practices</h3>
+// Controller state queries also work
+if (m_gsController.IsButtonDown(GSC_BUTTON_A))
+    player.Jump();
+
+// Analog inputs work independently
+float leftX = m_gsController.GetLeftStickX();
+if (fabs(leftX) > 0.15f)
+    player.MoveX(leftX * speed);</code></pre>
+
+            <h3>How It Works</h3>
+            <p>The integration is possible because:</p>
             <ul>
-                <li><strong>Frame-Rate Independence:</strong> Always use <code>GetActionInterval()</code> for movement and timing</li>
-                <li><strong>State Initialization:</strong> Use <code>m_nPrevProgress</code> check to initialize state variables once</li>
-                <li><strong>Clear Buffers:</strong> Call <code>m_gsKeyboard.ClearBuffer()</code> when entering new states</li>
-                <li><strong>Resource Management:</strong> Load resources in <code>GameInit()</code>, cleanup in <code>GameShutdown()</code></li>
-                <li><strong>Separation of Concerns:</strong> Keep input, update, and rendering separate</li>
-                <li><strong>Error Handling:</strong> Check return values of Create() and other initialization functions</li>
-                <li><strong>Dead Zones:</strong> Apply dead zones (0.15-0.25) to analog sticks to prevent drift</li>
-                <li><strong>Controller Support:</strong> Always support both keyboard and controller for accessibility</li>
-                <li><strong>Rumble Sparingly:</strong> Don't overuse haptic feedback as it can be annoying</li>
+                <li>Controller button codes (0x1000-0x100E) don't conflict with keyboard codes (0x00-0xFF)</li>
+                <li>SDL event loop converts controller events to WM_KEYDOWN/WM_KEYUP messages with controller button codes</li>
+                <li>The new <code>SetButtonDown()</code> and <code>SetButtonUp()</code> methods update controller button states when called from MsgProc</li>
+                <li>Keyboard class accepts any virtual key code (including controller buttons) for buffered input</li>
+                <li>Same buffered input system works for both input types</li>
+                <li><code>GetButtonPressed()</code> and <code>IsButtonDown()</code> queries work on the manually updated button states</li>
             </ul>
 
-            <div style="background-color: #fffbcc; padding: 15px; border-left: 4px solid #ffcc00; margin: 20px 0;">
-                <h4 style="margin-top: 0;">💡 Pro Tip</h4>
-                <p>Start by modifying the <code>PlayGame()</code> method with simple changes, then gradually expand to new states and features. The template provides a complete working example you can learn from and build upon. Don't be afraid to experiment!</p>
-                <p style="margin-bottom: 0;"><strong>Controller Tip:</strong> The framework unifies keyboard and controller input, so controller button codes (GSC_BUTTON_*) are handled through the same buffered input system as keyboard keys. This means you can support both input types with minimal code changes!</p>
+            <h3>Manual Button State Methods</h3>
+            <p>Two new methods allow manual control of controller button states:</p>
+
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                <thead>
+                    <tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">
+                        <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Method</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Purpose</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Typical Use</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 10px; border: 1px solid #ddd;"><code>SetButtonDown(int nButton)</code></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Sets button state to pressed</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Called in WM_KEYDOWN handler for controller buttons</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;"><code>SetButtonUp(int nButton)</code></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Sets button state to released</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Called in WM_KEYUP handler for controller buttons</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Important:</strong> <code>SetButtonDown()</code> only updates the button state array. To also add the button press to the buffered input queue, you must call <code>AddButtonToBuffer()</code> separately, as shown in the example above.</p>
+
+            <div style="background-color: #d4edda; padding: 15px; border-left: 4px solid #28a745; margin: 20px 0;">
+                <h4 style="margin-top: 0;">✅ Best Practice</h4>
+                <p>This unified approach means you only need to handle input once in your game code. The key features are:</p>
+                <ul style="margin-bottom: 10px;">
+                    <li><strong>Dual Input Modes:</strong> Controller buttons work through both buffered input (GetBufferedButton) and state queries (IsButtonDown, GetButtonPressed)</li>
+                    <li><strong>Seamless Switching:</strong> Players can switch between keyboard and controller mid-game</li>
+                    <li><strong>Simultaneous Input:</strong> Both input devices can be used at the same time</li>
+                    <li><strong>Analog Support:</strong> Analog sticks and triggers work independently through dedicated methods</li>
+                </ul>
+                <p style="margin-bottom: 0;">The manual button state methods (<code>SetButtonDown/Up</code>) are the bridge that makes this integration work, allowing controller button events from SDL to update the controller state arrays that your game queries.</p>
             </div>
         </div>
     </section>
-
 </body>
 </html>

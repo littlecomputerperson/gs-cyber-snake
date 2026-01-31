@@ -15,27 +15,21 @@
 #include "gs_sdl_controller.h"
 #include <string.h>
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-const char* GS_Controller::ButtonDescription[GSC_BUTTON_COUNT] =
-{
-    "A Button", "B Button", "X Button", "Y Button",
-    "Back", "Guide", "Start",
-    "Left Stick", "Right Stick",
-    "Left Shoulder", "Right Shoulder",
-    "D-Pad Up", "D-Pad Down", "D-Pad Left", "D-Pad Right"
-};
-
+const char *GS_Controller::ButtonDescription[GSC_BUTTON_COUNT] =
+    {
+        "A Button", "B Button", "X Button", "Y Button",
+        "Back", "Guide", "Start",
+        "Left Stick", "Right Stick",
+        "Left Shoulder", "Right Shoulder",
+        "D-Pad Up", "D-Pad Down", "D-Pad Left", "D-Pad Right"};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor Methods //////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GS_Controller():
@@ -75,9 +69,7 @@ GS_Controller::GS_Controller()
     InitializeControllers();
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::~GS_Controller():
@@ -93,14 +85,11 @@ GS_Controller::~GS_Controller()
     CloseControllers();
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialization Methods //////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::InitializeControllers():
@@ -129,9 +118,7 @@ void GS_Controller::InitializeControllers()
     }
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::CloseControllers():
@@ -155,14 +142,11 @@ void GS_Controller::CloseControllers()
     m_nConnectedCount = 0;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Controller Management Methods ///////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::FindControllerIndex():
@@ -184,9 +168,7 @@ int GS_Controller::FindControllerIndex(SDL_JoystickID instanceID)
     return -1;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::FindFreeSlot():
@@ -208,14 +190,11 @@ int GS_Controller::FindFreeSlot()
     return -1;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Update/Reset Methods ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::Update():
@@ -231,9 +210,7 @@ void GS_Controller::Update(HWND hWnd)
     (void)hWnd; // SDL handles events in main loop
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::Reset():
@@ -253,9 +230,7 @@ void GS_Controller::Reset()
     ClearBuffer();
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::ResetController():
@@ -282,14 +257,11 @@ void GS_Controller::ResetController(int nControllerIndex)
     }
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Connection Status Methods ///////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::IsControllerConnected():
@@ -307,9 +279,7 @@ BOOL GS_Controller::IsControllerConnected(int nControllerIndex)
     return m_controllers[nControllerIndex].isConnected;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetControllerName():
@@ -320,7 +290,7 @@ BOOL GS_Controller::IsControllerConnected(int nControllerIndex)
 //          "Invalid Controller" if index is out of range.
 //==============================================================================================
 
-const char* GS_Controller::GetControllerName(int nControllerIndex)
+const char *GS_Controller::GetControllerName(int nControllerIndex)
 {
     if (nControllerIndex < 0 || nControllerIndex >= GS_MAX_CONTROLLERS)
         return "Invalid Controller";
@@ -331,9 +301,7 @@ const char* GS_Controller::GetControllerName(int nControllerIndex)
     return m_controllers[nControllerIndex].name;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::SetActiveController():
@@ -353,14 +321,11 @@ void GS_Controller::SetActiveController(int nControllerIndex)
     }
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Event Handling Methods (called from SDL event loop) ////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::OnControllerAdded():
@@ -377,7 +342,7 @@ void GS_Controller::OnControllerAdded(int nDeviceIndex)
     if (slot == -1)
         return;
 
-    SDL_GameController* controller = SDL_GameControllerOpen(nDeviceIndex);
+    SDL_GameController *controller = SDL_GameControllerOpen(nDeviceIndex);
     if (!controller)
         return;
 
@@ -385,7 +350,7 @@ void GS_Controller::OnControllerAdded(int nDeviceIndex)
     m_controllers[slot].instanceID = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
     m_controllers[slot].isConnected = TRUE;
 
-    const char* name = SDL_GameControllerName(controller);
+    const char *name = SDL_GameControllerName(controller);
     if (name)
     {
         strncpy(m_controllers[slot].name, name, sizeof(m_controllers[slot].name) - 1);
@@ -400,9 +365,7 @@ void GS_Controller::OnControllerAdded(int nDeviceIndex)
     }
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::OnControllerRemoved():
@@ -442,9 +405,7 @@ void GS_Controller::OnControllerRemoved(SDL_JoystickID instanceID)
     }
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::OnButtonDown():
@@ -469,9 +430,7 @@ void GS_Controller::OnButtonDown(SDL_JoystickID instanceID, int nButton)
     AddButtonToBuffer(GSC_BUTTON_A + nButton);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::OnButtonUp():
@@ -493,9 +452,7 @@ void GS_Controller::OnButtonUp(SDL_JoystickID instanceID, int nButton)
     m_controllers[index].buttonPressed[nButton] = FALSE;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::OnAxisMotion():
@@ -518,14 +475,11 @@ void GS_Controller::OnAxisMotion(SDL_JoystickID instanceID, int nAxis, float fVa
     m_controllers[index].axisValue[nAxis] = fValue;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Methods for Getting Button Input ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::IsButtonDown():
@@ -541,7 +495,7 @@ BOOL GS_Controller::IsButtonDown(int nButton, int nControllerIndex)
 
     // Convert button define to array index
     int buttonIndex = nButton - GSC_BUTTON_A;
-    
+
     // Check if valid button code.
     if (buttonIndex < 0 || buttonIndex >= GSC_BUTTON_COUNT)
         return FALSE;
@@ -558,9 +512,7 @@ BOOL GS_Controller::IsButtonDown(int nButton, int nControllerIndex)
     return m_controllers[controller].buttonPressed[buttonIndex];
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::AreButtonsDown():
@@ -570,7 +522,7 @@ BOOL GS_Controller::IsButtonDown(int nButton, int nControllerIndex)
 // Returns: TRUE if all buttons are pressed, FALSE if any button is not pressed.
 //==============================================================================================
 
-BOOL GS_Controller::AreButtonsDown(int nNumButtons, int* pButtons, int nControllerIndex)
+BOOL GS_Controller::AreButtonsDown(int nNumButtons, int *pButtons, int nControllerIndex)
 {
 
     // Exit if wrong number of buttons.
@@ -589,9 +541,7 @@ BOOL GS_Controller::AreButtonsDown(int nNumButtons, int* pButtons, int nControll
     return TRUE;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::AreButtonsUp():
@@ -601,7 +551,7 @@ BOOL GS_Controller::AreButtonsDown(int nNumButtons, int* pButtons, int nControll
 // Returns: TRUE if all buttons are released, FALSE if any button is pressed.
 //==============================================================================================
 
-BOOL GS_Controller::AreButtonsUp(int nNumButtons, int* pButtons, int nControllerIndex)
+BOOL GS_Controller::AreButtonsUp(int nNumButtons, int *pButtons, int nControllerIndex)
 {
 
     // Exit if wrong number of buttons.
@@ -620,9 +570,7 @@ BOOL GS_Controller::AreButtonsUp(int nNumButtons, int* pButtons, int nController
     return TRUE;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetButtonPressed():
@@ -659,14 +607,11 @@ int GS_Controller::GetButtonPressed(int nControllerIndex)
     return -1;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Methods for Getting Axis Input //////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetAxisValue():
@@ -682,7 +627,7 @@ float GS_Controller::GetAxisValue(int nAxis, int nControllerIndex)
 
     // Convert axis define to array index
     int axisIndex = nAxis - GSC_AXIS_LEFTX;
-    
+
     // Check if valid axis code.
     if (axisIndex < 0 || axisIndex >= GSC_AXIS_COUNT)
         return 0.0f;
@@ -699,9 +644,7 @@ float GS_Controller::GetAxisValue(int nAxis, int nControllerIndex)
     return m_controllers[controller].axisValue[axisIndex];
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetLeftStickX():
@@ -717,9 +660,7 @@ float GS_Controller::GetLeftStickX(int nControllerIndex)
     return GetAxisValue(GSC_AXIS_LEFTX, nControllerIndex);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetLeftStickY():
@@ -735,9 +676,7 @@ float GS_Controller::GetLeftStickY(int nControllerIndex)
     return GetAxisValue(GSC_AXIS_LEFTY, nControllerIndex);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetRightStickX():
@@ -753,9 +692,7 @@ float GS_Controller::GetRightStickX(int nControllerIndex)
     return GetAxisValue(GSC_AXIS_RIGHTX, nControllerIndex);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetRightStickY():
@@ -771,9 +708,7 @@ float GS_Controller::GetRightStickY(int nControllerIndex)
     return GetAxisValue(GSC_AXIS_RIGHTY, nControllerIndex);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetLeftTrigger():
@@ -789,9 +724,7 @@ float GS_Controller::GetLeftTrigger(int nControllerIndex)
     return GetAxisValue(GSC_AXIS_TRIGGERLEFT, nControllerIndex);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetRightTrigger():
@@ -807,14 +740,11 @@ float GS_Controller::GetRightTrigger(int nControllerIndex)
     return GetAxisValue(GSC_AXIS_TRIGGERRIGHT, nControllerIndex);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Buffered Input Methods //////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::AddButtonToBuffer():
@@ -855,9 +785,7 @@ BOOL GS_Controller::AddButtonToBuffer(int nButton)
     return (!bBufferFull);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::ClearBuffer():
@@ -876,9 +804,7 @@ void GS_Controller::ClearBuffer()
     m_nItemsInBuffer = 0;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetBufferedButton():
@@ -911,14 +837,11 @@ int GS_Controller::GetBufferedButton(BOOL bRemoveButton)
     return nButton;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // Utility Methods /////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::GetButtonDescription():
@@ -929,12 +852,12 @@ int GS_Controller::GetBufferedButton(BOOL bRemoveButton)
 //          "Unknown" if button code is invalid.
 //==============================================================================================
 
-const char* GS_Controller::GetButtonDescription(int nButton)
+const char *GS_Controller::GetButtonDescription(int nButton)
 {
 
     // Convert button define to array index
     int buttonIndex = nButton - GSC_BUTTON_A;
-    
+
     // Is the button code within bounds?
     if (buttonIndex < 0 || buttonIndex >= GSC_BUTTON_COUNT)
         return "Unknown";
@@ -942,9 +865,7 @@ const char* GS_Controller::GetButtonDescription(int nButton)
     return ButtonDescription[buttonIndex];
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //==============================================================================================
 // GS_Controller::EnableRumble():
@@ -975,5 +896,76 @@ void GS_Controller::EnableRumble(int nControllerIndex, float fLowFreq, float fHi
     SDL_GameControllerRumble(m_controllers[controller].controller, lowFreq, highFreq, nDurationMs);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Public Button State Methods (for manual state updates) /////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+//==============================================================================================
+// GS_Controller::SetButtonDown():
+// ---------------------------------------------------------------------------------------------
+// Purpose: Manually sets a button state to pressed. Can be called from MsgProc when receiving
+//          controller button events through the Windows message system.
+// ---------------------------------------------------------------------------------------------
+// Returns: Nothing.
+//==============================================================================================
+
+void GS_Controller::SetButtonDown(int nButton, int nControllerIndex)
+{
+
+    // Convert button define to array index
+    int buttonIndex = nButton - GSC_BUTTON_A;
+
+    // Check if valid button code.
+    if (buttonIndex < 0 || buttonIndex >= GSC_BUTTON_COUNT)
+        return;
+
+    // Use active controller if no specific controller specified.
+    int controller = (nControllerIndex == -1) ? m_nActiveController : nControllerIndex;
+    if (controller < 0 || controller >= GS_MAX_CONTROLLERS)
+        return;
+
+    // Is the controller connected?
+    if (!m_controllers[controller].isConnected)
+        return;
+
+    // Update the button state to pressed.
+    m_controllers[controller].buttonPressed[buttonIndex] = TRUE;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+//==============================================================================================
+// GS_Controller::SetButtonUp():
+// ---------------------------------------------------------------------------------------------
+// Purpose: Manually sets a button state to released. Can be called from MsgProc when receiving
+//          controller button events through the Windows message system.
+// ---------------------------------------------------------------------------------------------
+// Returns: Nothing.
+//==============================================================================================
+
+void GS_Controller::SetButtonUp(int nButton, int nControllerIndex)
+{
+
+    // Convert button define to array index
+    int buttonIndex = nButton - GSC_BUTTON_A;
+
+    // Check if valid button code.
+    if (buttonIndex < 0 || buttonIndex >= GSC_BUTTON_COUNT)
+        return;
+
+    // Use active controller if no specific controller specified.
+    int controller = (nControllerIndex == -1) ? m_nActiveController : nControllerIndex;
+    if (controller < 0 || controller >= GS_MAX_CONTROLLERS)
+        return;
+
+    // Is the controller connected?
+    if (!m_controllers[controller].isConnected)
+        return;
+
+    // Update the button state to not pressed.
+    m_controllers[controller].buttonPressed[buttonIndex] = FALSE;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

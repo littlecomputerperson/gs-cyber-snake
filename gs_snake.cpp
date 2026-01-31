@@ -703,6 +703,7 @@ LRESULT GS_Snake::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         // Also add to controller buffer if it's a controller button
         if (wParam >= GSC_BUTTON_A && wParam <= GSC_BUTTON_DPAD_RIGHT)
         {
+            m_gsController.SetButtonDown(wParam);
             m_gsController.AddButtonToBuffer(wParam);
         }
         break;
@@ -712,6 +713,12 @@ LRESULT GS_Snake::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_KEYUP:
         // Mark the key that was released.
         m_gsKeyboard.KeyUp(wParam);
+
+        // Also add to controller buffer if it's a controller button
+        if (wParam >= GSC_BUTTON_A && wParam <= GSC_BUTTON_DPAD_RIGHT)
+        {
+            m_gsController.SetButtonUp(wParam);
+        }
         break;
 
     // Received when the user holds down the ALT key and then presses another key.
