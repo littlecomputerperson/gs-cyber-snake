@@ -847,6 +847,8 @@ BOOL GS_Snake::GameIntro()
         m_fAlpha = 0.0f;
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
+        // Clear the controller buffer.
+        m_gsController.ClearBuffer();
         // Where we want to go to next.
         m_nNextProgress = TITLE_INTRO;
         // Initialization completed.
@@ -989,6 +991,8 @@ BOOL GS_Snake::GameOutro()
     {
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
+        // Clear the controller buffer.
+        m_gsController.ClearBuffer();
         // Initialize method variables.
         m_fInterval = 0.0f;
         m_nCounter = 0;
@@ -1304,6 +1308,9 @@ BOOL GS_Snake::TitleScreen()
 
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
+
+        // Clear the controller buffer.
+        m_gsController.ClearBuffer();
 
         // Setup variables for mouse input.
         m_nOldMouseX = m_gsMouse.GetX();
@@ -2088,6 +2095,8 @@ BOOL GS_Snake::OptionScreen()
         m_nOptionSelected = -1;
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
+        // Clear the controller buffer.
+        m_gsController.ClearBuffer();
         // Setup variables for mouse input.
         m_nOldMouseX = m_gsMouse.GetX();
         m_nOldMouseY = m_gsMouse.GetY();
@@ -2585,6 +2594,8 @@ BOOL GS_Snake::PlayIntro()
         m_nOptionSelected = -1;
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
+        // Clear the controller buffer.
+        m_gsController.ClearBuffer();
         // Setup variables for mouse input.
         m_nOldMouseX = m_gsMouse.GetX();
         m_nOldMouseY = m_gsMouse.GetY();
@@ -2889,6 +2900,9 @@ BOOL GS_Snake::PlayGame()
 
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
+
+        // Clear the controller buffer.
+        m_gsController.ClearBuffer();
     }
     // Are we returning to the same game?
     else if (m_nPrevProgress != PLAY_GAME)
@@ -2898,7 +2912,10 @@ BOOL GS_Snake::PlayGame()
 
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
-    }
+        
+        // Clear the controller buffer.
+        m_gsController.ClearBuffer();
+}
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Get Keyboard Input ///////////////////////////////////////////////////////////////////////
@@ -2948,6 +2965,7 @@ BOOL GS_Snake::PlayGame()
             m_gsSound.SetStreamVolume(0);
         }
         m_gsKeyboard.ClearBuffer();
+        m_gsController.ClearBuffer();
         break;
     // Was the 'S' key pressed?
     case GSK_S:
@@ -2963,6 +2981,7 @@ BOOL GS_Snake::PlayGame()
             m_gsSound.SetSampleMaster(0);
         }
         m_gsKeyboard.ClearBuffer();
+        m_gsController.ClearBuffer();
         break;
     /*
     // Was the spacebar key pressed?
@@ -2970,6 +2989,7 @@ BOOL GS_Snake::PlayGame()
         // Go to the play exit method.
         m_nGameProgress = PLAY_OUTRO;
         m_gsKeyboard.ClearBuffer();
+        m_gsController.ClearBuffer();
         break;
     */
     // Was the escape key pressed?
@@ -2978,10 +2998,12 @@ BOOL GS_Snake::PlayGame()
         // Go to the play exit method.
         m_nGameProgress = PLAY_EXIT;
         m_gsKeyboard.ClearBuffer();
+        m_gsController.ClearBuffer();
         break;
     default:
         // ...
         m_gsKeyboard.ClearBuffer();
+        m_gsController.ClearBuffer();
         break;
     }
 
@@ -3072,6 +3094,9 @@ BOOL GS_Snake::PlayGame()
 
                 // Clear the keyboard buffer
                 m_gsKeyboard.ClearBuffer();
+
+                // Clear the controller buffer.
+                m_gsController.ClearBuffer();
             }
             // std::cout << "Game Over\n";
         }
@@ -3262,6 +3287,9 @@ BOOL GS_Snake::PlayGame()
 
             // Clear the keyboard buffer
             m_gsKeyboard.ClearBuffer();
+
+            // Clear the controller buffer.
+            m_gsController.ClearBuffer();
         }
 
         // One action less to be taken.
@@ -4199,6 +4227,8 @@ BOOL GS_Snake::ScoresView()
         m_fInterval = 0.0f;
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
+        // Clear the controller buffer.
+        m_gsController.ClearBuffer();
         // Where we want to go to next.
         m_nNextProgress = SCORES_OUTRO;
         // Initialization completed.
@@ -4386,6 +4416,8 @@ BOOL GS_Snake::ScoresAdd()
         lstrcpy(szTempString, "..........");
         // Clear the keyboard buffer.
         m_gsKeyboard.ClearBuffer();
+        // Clear the controller buffer.
+        m_gsController.ClearBuffer();
         // Where we want to go to next.
         m_nNextProgress = SCORES_OUTRO;
         // Initialization completed.
