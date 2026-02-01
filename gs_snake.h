@@ -207,14 +207,13 @@ private:
     int m_nPrevProgress; // Previous stage.
     int m_nNextProgress; // Next stage.
 
-    BOOL m_bIsInitialized;     // Has a method been initialized?
-    BOOL m_bWasKeyReleased;    // Whether a key has been released.
-    BOOL m_bWasButtonReleased; // Whether a controller button has been released.
-    BOOL m_bWasMouseReleased;  // Whether the left mouse button was released.
-    int m_nOldMouseX;          // Previous mouse x coordinate.
-    int m_nOldMouseY;          // Previous mouse y coordinate.
-    int m_nOptionSelected;     // Which menu option was selected.
-    int m_nCounter;            // Used for counting throughout the game.
+    BOOL m_bIsInitialized;    // Has a method been initialized?
+    BOOL m_bWasKeyReleased;   // Whether a key has been released.
+    BOOL m_bWasMouseReleased; // Whether the left mouse button was released.
+    int m_nOldMouseX;         // Previous mouse x coordinate.
+    int m_nOldMouseY;         // Previous mouse y coordinate.
+    int m_nOptionSelected;    // Which menu option was selected.
+    int m_nCounter;           // Used for counting throughout the game.
 
     float m_fInterval; // Used for game timing.
     float m_fRotate;   // Used for rotation effects.

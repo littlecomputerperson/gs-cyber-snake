@@ -63,7 +63,6 @@ GS_Snake::GS_Snake() : GS_Application()
 
     m_bIsInitialized = FALSE;
     m_bWasKeyReleased = FALSE;
-    m_bWasButtonReleased = FALSE;
     m_nOptionSelected = -1;
     m_nCounter = 0;
 
@@ -2652,7 +2651,6 @@ BOOL GS_Snake::PlayIntro()
         // Return to the title screen.
         m_nGameProgress = TITLE_INTRO;
         m_bWasKeyReleased = FALSE;
-        m_bWasButtonReleased = FALSE;
         break;
     }
 
@@ -3613,7 +3611,6 @@ BOOL GS_Snake::PlayExit()
     {
         // Initialize method variables.
         m_bWasKeyReleased = FALSE;
-        m_bWasButtonReleased = FALSE;
         // Clear keyboard buffer.
         m_gsKeyboard.ClearBuffer();
         // Clear controller buffer.
@@ -3646,14 +3643,15 @@ BOOL GS_Snake::PlayExit()
     m_gsMenu.AddOption("     NO      ");
 
     /////////////////////////////////////////////////////////////////////////////////////////////
-    // Get Keyboard Input ///////////////////////////////////////////////////////////////////////
+    // Get Keyboard / Controller Input //////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////
 
     // Reset the selected option.
     m_nOptionSelected = -1;
 
     // Were all the keys in the key list released?
-    if (TRUE == m_gsKeyboard.AreKeysUp(6, KeyList))
+    if (TRUE == m_gsKeyboard.AreKeysUp(6, KeyList) &&
+        TRUE == m_gsController.AreButtonsUp(4, ButtonList))
     {
         m_bWasKeyReleased = TRUE;
     }
@@ -3661,11 +3659,20 @@ BOOL GS_Snake::PlayExit()
     // Check to see wether a key was pressed.
     int nKey = m_gsKeyboard.GetKeyPressed();
 
+    // Check to see wether a button was pressed.
+    int nButton = m_gsController.GetBufferedButton();
+
+    if (nButton != -1)
+    {
+        nKey = nButton;
+    }
+
     // Act depending on key pressed.
     switch (nKey)
     {
     // Was the up key pressed?
     case GSK_UP:
+    case GSC_BUTTON_DPAD_UP:
         if (m_bWasKeyReleased)
         {
             // Highlight previous option.
@@ -3676,6 +3683,7 @@ BOOL GS_Snake::PlayExit()
         break;
     // Was the down key pressed?
     case GSK_DOWN:
+    case GSC_BUTTON_DPAD_DOWN:
         if (m_bWasKeyReleased)
         {
             // Highlight next option.
@@ -3706,6 +3714,7 @@ BOOL GS_Snake::PlayExit()
         break;
     // Was the enter key pressed?
     case GSK_ENTER:
+    case GSC_BUTTON_A:
         if (m_bWasKeyReleased)
         {
             // Remeber the option selected.
@@ -3715,67 +3724,12 @@ BOOL GS_Snake::PlayExit()
         break;
     // Was the escape key pressed?
     case GSK_ESCAPE:
+    case GSC_BUTTON_B:
         if (m_bWasKeyReleased)
         {
             // The no option was selected.
             m_nOptionSelected = 1;
             m_bWasKeyReleased = FALSE;
-        }
-        break;
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    // Get Controller Input /////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Were all the buttons in the button list released?
-    if (TRUE == m_gsController.AreButtonsUp(4, ButtonList))
-    {
-        m_bWasButtonReleased = TRUE;
-    }
-
-    // Check to see wether a button was pressed.
-    int nButton = m_gsController.GetBufferedButton();
-
-    // Act depending on button pressed.
-    switch (nButton)
-    {
-    // Was the up key pressed?
-    case GSC_BUTTON_DPAD_UP:
-        if (m_bWasButtonReleased)
-        {
-            // Highlight previous option.
-            m_gsMenu.HighlightPrev();
-            m_gsSound.PlaySample(SAMPLE_OPTION);
-            m_bWasButtonReleased = FALSE;
-        }
-        break;
-    // Was the down key pressed?
-    case GSC_BUTTON_DPAD_DOWN:
-        if (m_bWasButtonReleased)
-        {
-            // Highlight next option.
-            m_gsMenu.HighlightNext();
-            m_gsSound.PlaySample(SAMPLE_OPTION);
-            m_bWasButtonReleased = FALSE;
-        }
-        break;
-    // Was the enter key pressed?
-    case GSC_BUTTON_A:
-        if (m_bWasButtonReleased)
-        {
-            // Remeber the option selected.
-            m_nOptionSelected = m_gsMenu.GetHighlight();
-            m_bWasButtonReleased = FALSE;
-        }
-        break;
-    // Was the escape key pressed?
-    case GSC_BUTTON_B:
-        if (m_bWasButtonReleased)
-        {
-            // The no option was selected.
-            m_nOptionSelected = 1;
-            m_bWasButtonReleased = FALSE;
         }
         break;
     }
@@ -4407,6 +4361,8 @@ BOOL GS_Snake::ScoresAdd()
 
     static int nCharCount = 0;
 
+    static float fInputRepeatFraction = 0.0f;
+
     static char szTempString[11] = {0};
 
     // Has the method not been initialized?
@@ -4415,6 +4371,7 @@ BOOL GS_Snake::ScoresAdd()
         // Initialize variables.
         m_nScoreIndex = 0;
         nCharCount = 0;
+        fInputRepeatFraction = 0.0f;
         // Loop through all the hiscores starting from the lowest.
         for (int nLoop = MAX_SCORES - 1; nLoop >= 0; nLoop--)
         {
@@ -4442,6 +4399,36 @@ BOOL GS_Snake::ScoresAdd()
     // Check to see wether a key was pressed.
     int nKey = m_gsKeyboard.GetBufferedKey();
 
+    // Implement input delay to allow for repeated inputs.
+    fInputRepeatFraction += this->GetActionInterval(60);
+
+    // Has enough time passed to allow for repeated input?
+    if (fInputRepeatFraction >= 5.0f && nKey <= 0)
+    {
+        // Check if keys are held down.
+        int nKeyPressed = m_gsKeyboard.GetKeyPressed();
+
+        // Was the up or down key held down?
+        if (nKeyPressed == GSK_UP ||
+            nKeyPressed == GSK_DOWN)
+        {
+            nKey = nKeyPressed;
+        }
+
+        // Check if buttons are held down.
+        int nPressedButton = m_gsController.GetButtonPressed();
+
+        // Was a D-Pad button held down?
+        if (nPressedButton == GSC_BUTTON_DPAD_UP ||
+            nPressedButton == GSC_BUTTON_DPAD_DOWN)
+        {
+            nKey = nPressedButton;
+        }
+
+        // Reset input delay fraction.
+        fInputRepeatFraction = 0.0f;
+    }
+
     // Act depending on key pressed.
     switch (nKey)
     {
@@ -4465,6 +4452,8 @@ BOOL GS_Snake::ScoresAdd()
         }
         // Play the appropriate sound effect.
         m_gsSound.PlaySample(SAMPLE_OPTION);
+        // Reset input delay fraction.
+        fInputRepeatFraction = 0.0f;
         break;
     // Was the up key pressed?
     case GSK_DOWN:
@@ -4486,6 +4475,8 @@ BOOL GS_Snake::ScoresAdd()
         }
         // Play the appropriate sound effect.
         m_gsSound.PlaySample(SAMPLE_OPTION);
+        // Reset input delay fraction.
+        fInputRepeatFraction = 0.0f;
         break;
     // Was the left key pressed?
     case GSK_LEFT:
