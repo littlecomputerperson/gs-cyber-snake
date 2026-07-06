@@ -445,7 +445,10 @@ Copy SDL2.dll and SDL2_mixer.dll to the executable directory.
 
 _The current version number is set by `GAME_VERSION` in [`gs_snake.h`](gs_snake.h)._
 
-**v1.0.3** (Current)
+**v1.0.4** (Current)
+- Fixed Windows builds failing to play MP3 music ("Unrecognized audio format") by enabling vcpkg's mpg123 codec feature
+
+**v1.0.3**
 - Fixed ini/hiscore files not loading or saving when launched from a directory other than the executable's own
 
 **v1.0.2**
