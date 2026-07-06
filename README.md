@@ -443,7 +443,9 @@ Copy SDL2.dll and SDL2_mixer.dll to the executable directory.
 
 ## Version History
 
-**v1.0.1** (Current)
+_The current version number is set by `GAME_VERSION` in [`gs_snake.h`](gs_snake.h)._
+
+**v1.0.2** (Current)
 - SDL2 cross-platform support
 - Improved scaling for modern displays
 - Bug fixes and stability improvements
